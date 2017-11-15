@@ -20,7 +20,7 @@
   },
   "build": {
     "productName": "echochamber",
-    "appId": "org.simulatedgreg.electron-vue",
+    "appId": "com.uranusjr.echochamber",
     "directories": {
       "output": "build"
     },

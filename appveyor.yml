@@ -28,3 +28,6 @@ build_script:
   - yarn build
 
 test: off
+
+artifacts:
+  - path: ".\\build\\win\\*.exe"
