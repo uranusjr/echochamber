@@ -1,5 +1,5 @@
 {
-  "name": "EchoChamber",
+  "name": "echochamber",
   "version": "0.0.0",
   "author": "Tzu-ping Chung <uranusjr@gmail.com>",
   "description": "Application for research of syntactic priming comprehension and production",
@@ -19,7 +19,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "echochamber",
+    "productName": "Echo Chamber",
     "appId": "com.uranusjr.echochamber",
     "directories": {
       "output": "build"
