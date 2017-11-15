@@ -3,7 +3,7 @@
 <div class="page-content">
 
 	<h1 class="title">
-		<span>{{ question.name }}</span>
+		<span>第 {{ index + 1 }} 題（共 {{ questionCount }} 題）</span>
 		<span v-bind:class="['icon', playing ? 'is-small' : '']"
 				v-bind:disabled="playing" v-on:click="play()">
 			<span v-bind:class="playIconClasses"></span>
@@ -13,7 +13,7 @@
 	<div class="columns is-multiline" v-if="!!begin">
 		<div class="column" v-for="image in images">
 			<a href="#" class="choice box" v-on:click.prevent="choose(image)">
-				<img v-bind:src="buildAssetUrl(image)">
+				<img v-bind:src="question.getAssetUrl(image)">
 			</a>
 		</div>
 	</div>
@@ -25,24 +25,13 @@
 
 <script>
 
-import path from 'path'
-
-import _ from 'lodash'
 import * as moment from 'moment'
 
 export default {
-	props: ['question'],
+	props: ['index', 'questionCount', 'question', 'next'],
 	data() {
-		const audio = new Audio(this.buildAssetUrl(this.question.readthrough))
-		audio.addEventListener('play', () => {
-			this.playing = true
-		})
-		audio.addEventListener('pause', () => {
-			this.playing = false
-		})
 		return {
-			audio: audio,
-			images: _.shuffle(this.question.images),
+			audio: this.createAudio(this.question),
 			playing: false,
 			begin: null,
 		}
@@ -57,6 +46,9 @@ export default {
 			}
 			return cls
 		},
+		images() {
+			return this.question.images
+		},
 		helpText() {
 			if (this.begin) {
 				return '點擊符合題目描述的圖片'
@@ -64,9 +56,25 @@ export default {
 			return '點擊按鈕播放題目'
 		},
 	},
+	watch: {
+		question: function () {
+			this.audio.pause()
+			this.audio = this.createAudio(this.question)
+		},
+		audio: function () {
+			this.begin = null
+		},
+	},
 	methods: {
-		buildAssetUrl: function (fileName) {
-			return path.join('static/questions', this.question.name, fileName)
+		createAudio(q) {
+			const audio = new Audio(q.getAssetUrl(q.readthrough))
+			audio.addEventListener('play', () => {
+				this.playing = true
+			})
+			audio.addEventListener('pause', () => {
+				this.playing = false
+			})
+			return audio
 		},
 		play() {
 			if (this.playing) {
@@ -79,12 +87,17 @@ export default {
 		},
 		choose(imageFilename) {
 			const diff = moment().diff(this.begin)
-			alert('選擇 ' + imageFilename + '，用時 ' + (diff / 1000.0) + ' 秒')
-			window.location.reload()
+			this.$store.dispatch('addImageAnswer', {
+				question: this.question,
+				choice: imageFilename,
+				usedMs: diff,
+			})
+			this.$router.push(this.next)
 		},
 	},
-	created() {
-
+	beforeRouteLeave(to, from, next) {
+		this.audio.pause()
+		next()
 	},
 }
 
