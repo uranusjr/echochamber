@@ -81,7 +81,7 @@
     "electron-builder": "^19.19.1",
     "electron-debug": "^1.4.0",
     "electron-devtools-installer": "^2.2.0",
-    "eslint": "^4.11.0",
+    "eslint": "^3.0.0",
     "eslint-config-vue": "^2.0.2",
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^1.9.0",

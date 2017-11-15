@@ -30,4 +30,4 @@ build_script:
 test: off
 
 artifacts:
-  - path: ".\\build\\win\\*.exe"
+  - path: ".\\build\\win-unpacked\\*"
