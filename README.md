@@ -1,4 +1,4 @@
-# echochamber
+# Echo Chamber
 
 > Application for research of syntactic priming comprehension and production
 

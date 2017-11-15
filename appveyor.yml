@@ -26,9 +26,8 @@ install:
 
 build_script:
   - yarn build
-  - ps: 'Tree .\build /F'
 
 test: off
 
-# artifacts:
-#   - path: ".\\build\\win-unpacked\\*"
+artifacts:
+  - path: ".\\build\\*.exe"
