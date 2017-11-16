@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import AudioCreate from '@/components/AudioCreate'
+import Index from '@/components/Index'
 import PictureChoice from '@/components/PictureChoice'
 import Result from '@/components/Result'
 
@@ -12,35 +14,80 @@ Vue.use(Router)
 export default new Router({
 	routes: [
 		{
-			path: '/image-choice/:index',
-			name: 'picture-choice',
+			path: '/session/:groupIndex/image/:questionIndex',
+			name: 'image',
 			component: PictureChoice,
 			props: route => {
-				const questions = store.getters.questions
-				const index = parseInt(route.params.index)
-				let next = {path: '/'}
-				if (index < questions.length - 1) {
-					next = {name: 'picture-choice', params: {index: index + 1}}
-				} else if (index === questions.length - 1) {
-					next = {name: 'result'}
+				const groupIndex = parseInt(route.params.groupIndex)
+				const questionIndex = parseInt(route.params.questionIndex)
+				const step = store.getters.getSessionStep(groupIndex, questionIndex)
+
+				let next = null
+				if (store.getters.getSessionStep(groupIndex, questionIndex + 1)) {
+					next = {
+						name: 'image',
+						params: {groupIndex: groupIndex, questionIndex: questionIndex + 1},
+					}
+				} else {
+					next = {
+						name: 'audio',
+						params: {groupIndex: groupIndex, questionIndex: 0},
+					}
 				}
+
 				return {
-					index: index,
-					questionCount: questions.length,
-					question: questions[index],
+					groupIndex: groupIndex,
+					questionIndex: questionIndex,
+					question: step.question,
 					next: next,
 				}
 			},
 		},
 		{
-			path: '/result',
+			path: '/session/:groupIndex/audio/:questionIndex',
+			name: 'audio',
+			component: AudioCreate,
+			props: route => {
+				const groupIndex = parseInt(route.params.groupIndex)
+				const questionIndex = parseInt(route.params.questionIndex)
+				const step = store.getters.getSessionStep(groupIndex, questionIndex)
+
+				let next = {name: 'result'}
+				if (store.getters.getSessionStep(groupIndex, questionIndex + 1)) {
+					next = {
+						name: 'audio',
+						params: {groupIndex: groupIndex, questionIndex: questionIndex + 1},
+					}
+				} else if (store.getters.getSessionGroup(groupIndex + 1)) {
+					next = {
+						name: 'audio',
+						params: {groupIndex: groupIndex + 1, questionIndex: 0},
+					}
+				}
+
+				return {
+					groupIndex: groupIndex,
+					questionIndex: questionIndex,
+					question: step.question,
+					imageName: step.imageAnswer.choice,
+					next: next,
+				}
+			},
+		},
+		{
+			path: '/session/result',
 			name: 'result',
 			component: Result,
-			props: {result: store.getters.imageAnswers},
+			props: route => {
+				return {
+					groups: store.state.qasession.groups,
+				}
+			},
 		},
 		{
 			path: '/',
-			redirect: '/image-choice/0',
+			name: 'index',
+			component: Index,
 		},
 		{
 			path: '*',

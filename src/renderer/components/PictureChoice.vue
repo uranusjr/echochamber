@@ -3,7 +3,9 @@
 <div class="page-content">
 
 	<h1 class="title">
-		<span>第 {{ index + 1 }} 題（共 {{ questionCount }} 題）</span>
+		<span>
+			第 {{ groupIndex + 1 }}-{{ questionIndex + 1 }} 題：{{ helpText }}
+		</span>
 		<span v-bind:class="['icon', playing ? 'is-small' : '']"
 				v-bind:disabled="playing" v-on:click="play()">
 			<span v-bind:class="playIconClasses"></span>
@@ -11,13 +13,13 @@
 	</h1>
 	<hr>
 	<div class="columns is-multiline" v-if="!!begin">
-		<div class="column" v-for="image in images">
-			<a href="#" class="choice box" v-on:click.prevent="choose(image)">
-				<img v-bind:src="question.getAssetUrl(image)">
+		<div class="column" v-for="imageName in images">
+			<a href="#" class="choice box" v-on:click.prevent="choose(imageName)">
+				<img v-bind:src="question.getAssetUrl(imageName)">
 			</a>
 		</div>
 	</div>
-	<p class="help">{{ helpText }}</p>
+
 </div>
 
 </template>
@@ -28,7 +30,7 @@
 import * as moment from 'moment'
 
 export default {
-	props: ['index', 'questionCount', 'question', 'next'],
+	props: ['groupIndex', 'questionIndex', 'question', 'next'],
 	data() {
 		return {
 			audio: this.createAudio(this.question),
@@ -86,11 +88,11 @@ export default {
 			this.audio.play()
 		},
 		choose(imageFilename) {
-			const diff = moment().diff(this.begin)
-			this.$store.dispatch('addImageAnswer', {
-				question: this.question,
+			this.$store.dispatch('SESSION_SET_IMAGE_ANSWER', {
+				groupIndex: this.groupIndex,
+				questionIndex: this.questionIndex,
 				choice: imageFilename,
-				usedMs: diff,
+				usedMs: moment().diff(this.begin),
 			})
 			this.$router.push(this.next)
 		},

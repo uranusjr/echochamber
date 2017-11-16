@@ -46,7 +46,16 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "ia32",
+            "x64"
+          ]
+        }
+      ]
     },
     "linux": {
       "icon": "build/icons"
@@ -57,6 +66,7 @@
     "font-awesome": "^4.7.0",
     "lodash": "^4.17.4",
     "moment": "^2.19.2",
+    "recorder-js": "^1.0.7",
     "vue": "^2.3.3",
     "vue-router": "^2.5.3",
     "vuex": "^2.3.1"

@@ -6,21 +6,30 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<th>題目</th>
-				<th>選擇</th>
-				<th>用時</th>
+				<th class="is-nowrap">題目</th>
+				<th class="is-nowrap">選擇</th>
+				<th class="is-nowrap">用時</th>
+				<th class="is-nowrap">復述</th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr v-for="answer in result">
-				<th>{{ answer.question.name }}</th>
+			<template v-for="group in groups">
+			<tr v-for="step in group">
+				<th class="is-nowrap">{{ step.question.name }}</th>
 				<td>
 					<div class="box">
-						<img v-bind:src="answer.question.getAssetUrl(answer.choice)">
+						<img v-bind:src="step.question.getAssetUrl(step.imageAnswer.choice)">
 					</div>
 				</td>
-				<td>{{ answer.usedMs / 1000.0 }} 秒</td>
+				<td class="is-nowrap">{{ step.imageAnswer.usedMs / 1000.0 }} 秒</td>
+				<td>
+					<audio controls="controls">
+						<source type="audio/wav"
+								v-bind:src="getBlobURL(step.audioAnswer.blob)">
+					</audio>
+				</td>
 			</tr>
+			</template>
 		</tbody>
 	</table>
 </div>
@@ -31,7 +40,12 @@
 <script>
 
 export default {
-	props: ['result'],
+	props: ['groups'],
+	methods: {
+		getBlobURL(blob) {
+			return window.URL.createObjectURL(blob)
+		},
+	},
 }
 
 </script>
@@ -51,5 +65,8 @@ export default {
 			padding: 0;
 		}
 	}
+}
+.is-nowrap {
+	white-space: nowrap;
 }
 </style>
