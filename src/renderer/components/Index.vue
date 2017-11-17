@@ -3,7 +3,17 @@
 <div class="index-page">
 
 	<form v-on:submit.prevent="submit">
-		<button type="submit" v-bind:class="submitButtonClass">開始</button>
+		<div class="field is-grouped">
+			<div class="control">
+				<router-link v-bind:to="{name: 'question-list'}"
+						class="button is-info is-large">
+					問題列表
+				</router-link>
+			</div>
+			<div class="control">
+				<button type="submit" v-bind:class="submitButtonClass">開始作答</button>
+			</div>
+		</div>
 	</form>
 
 </div>
@@ -32,7 +42,11 @@ export default {
 	methods: {
 		submit() {
 			this.loading = true
-			this.$store.dispatch('SESSION_POPULATE', {groupSize: 3}).then(() => {
+			const data = {
+				questions: this.$store.state.questionpool.questions,
+				groupSize: 3,
+			}
+			this.$store.dispatch('SESSION_POPULATE', data).then(() => {
 				this.loading = false
 				this.$router.push({
 					name: 'image',

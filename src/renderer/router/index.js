@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import AudioCreate from '@/components/AudioCreate'
 import Index from '@/components/Index'
 import PictureChoice from '@/components/PictureChoice'
+import QuestionList from '@/components/QuestionList'
 import Result from '@/components/Result'
 
 import store from '@/store'
@@ -13,6 +14,16 @@ Vue.use(Router)
 
 export default new Router({
 	routes: [
+		{
+			path: '/questions/',
+			name: 'question-list',
+			component: QuestionList,
+			props: route => {
+				return {
+					questions: store.state.questionpool.questions,
+				}
+			},
+		},
 		{
 			path: '/session/:groupIndex/image/:questionIndex',
 			name: 'image',

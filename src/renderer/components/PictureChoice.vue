@@ -13,10 +13,10 @@
 	</h1>
 	<hr>
 	<div class="columns is-multiline" v-if="!!begin">
-		<div class="column" v-for="imageName in images">
-			<a href="#" class="choice box" v-on:click.prevent="choose(imageName)">
-				<img v-bind:src="question.getAssetUrl(imageName)">
-			</a>
+		<div class="column" v-for="imageName in question.images"
+					v-on:click="choose(imageName)">
+			<image-box class="choice" v-bind:src="question.getAssetUrl(imageName)">
+			</image-box>
 		</div>
 	</div>
 
@@ -47,9 +47,6 @@ export default {
 				cls.push('fa-play-circle')
 			}
 			return cls
-		},
-		images() {
-			return this.question.images
 		},
 		helpText() {
 			if (this.begin) {
@@ -108,6 +105,8 @@ export default {
 
 <style lang="scss" scoped>
 
+@import '~@/styles/variables';
+
 .title {
 	> *:not(:last-child) {
 		margin-right: 1rem;
@@ -136,8 +135,12 @@ export default {
 .column {
 	padding: 16px;
 }
-.choice.box {
-	padding: 0;
+.choice {
+	cursor: pointer;
+
+	&:hover {
+		box-shadow: 0 2px 3px $grey-lighter, 0 0 0 1px $link;
+	}
 }
 
 </style>

@@ -1,6 +1,7 @@
 <template>
 
 <div class="page-content">
+
 	<h1 class="title">結果</h1>
 
 	<table class="table">
@@ -17,9 +18,9 @@
 			<tr v-for="step in group">
 				<th class="is-nowrap">{{ step.question.name }}</th>
 				<td>
-					<div class="box">
-						<img v-bind:src="step.question.getAssetUrl(step.imageAnswer.choice)">
-					</div>
+					<image-box
+							v-bind:src="step.question.getAssetUrl(step.imageAnswer.choice)">
+					</image-box>
 				</td>
 				<td class="is-nowrap">{{ step.imageAnswer.usedMs / 1000.0 }} 秒</td>
 				<td>
@@ -62,11 +63,7 @@ export default {
 
 		.box {
 			max-width: 33vw;
-			padding: 0;
 		}
 	}
-}
-.is-nowrap {
-	white-space: nowrap;
 }
 </style>

@@ -6,7 +6,15 @@ import App from './App'
 import router from './router'
 import store from './store'
 
+import ImageBox from '@/components/_ImageBox'
+import WaveDisplay from '@/components/_WaveDisplay'
+
+
 Vue.config.productionTip = false
+
+Vue.component('image-box', ImageBox)
+Vue.component('wave-display', WaveDisplay)
+
 
 /* eslint-disable no-new */
 new Vue({

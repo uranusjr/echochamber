@@ -9,9 +9,7 @@
 	<div class="tile is-ancestor">
 		<div class="tile is-parent">
 			<div class="tile is-child">
-				<div class="box">
-					<img v-bind:src="question.getAssetUrl(imageName)">
-				</div>
+				<image-box v-bind:src="question.getAssetUrl(imageName)"></image-box>
 			</div>
 		</div>
 		<div class="tile is-vertical is-parent">
@@ -44,12 +42,7 @@
 
 import Recorder from 'recorder-js'
 
-import WaveDisplay from './WaveDisplay'
-
 export default {
-	components: {
-		WaveDisplay: WaveDisplay,
-	},
 	props: ['groupIndex', 'questionIndex', 'question', 'imageName', 'next'],
 	data() {
 		const audioContext = new window.AudioContext()
@@ -111,9 +104,6 @@ export default {
 
 <style lang="scss" scoped>
 
-.box {
-	padding: 0;
-}
 .fa-microphone {
 	font-size: 125%;
 }
