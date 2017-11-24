@@ -34,7 +34,7 @@ const mutations = {
 				readthrough: data.readthrough,
 			})
 			return {
-				question: question,
+				question: Object.freeze(question),
 				imageAnswer: null,
 				audioAnswer: null,
 			}

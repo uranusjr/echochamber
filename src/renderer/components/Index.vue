@@ -5,13 +5,19 @@
 	<form v-on:submit.prevent="submit">
 		<div class="field is-grouped">
 			<div class="control">
-				<router-link v-bind:to="{name: 'question-list'}"
-						class="button is-info is-large">
+				<router-link v-bind:to="{name: 'question-list'}" class="button">
 					問題列表
 				</router-link>
 			</div>
 			<div class="control">
-				<button type="submit" v-bind:class="submitButtonClass">開始作答</button>
+				<router-link v-bind:to="{name: 'result-list'}" class="button">
+					結果列表
+				</router-link>
+			</div>
+		</div>
+		<div class="submit field is-grouped">
+			<div class="control">
+				<button type="submit" v-bind:class="submitClass">開始作答</button>
 			</div>
 		</div>
 	</form>
@@ -30,20 +36,20 @@ export default {
 		}
 	},
 	computed: {
-		submitButtonClass() {
+		submitClass() {
 			return {
 				'button': true,
 				'is-primary': true,
 				'is-large': true,
 				'is-loading': this.loading,
 			}
-		}
+		},
 	},
 	methods: {
 		submit() {
 			this.loading = true
 			const data = {
-				questions: this.$store.state.questionpool.questions,
+				questions: this.$store.state.pool.questions,
 				groupSize: 3,
 			}
 			this.$store.dispatch('SESSION_POPULATE', data).then(() => {
@@ -72,6 +78,10 @@ export default {
 
 	form {
 		padding-bottom: 10vh;	// Add padding for visual compensation.
+
+		.submit.field {
+			justify-content: center;
+		}
 	}
 }
 

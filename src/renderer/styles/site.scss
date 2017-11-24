@@ -3,19 +3,13 @@
 @import '~bulma';
 @import '~font-awesome/scss/font-awesome';
 
+.is-narrow {
+	width: 1px;
+}
 .is-nowrap {
 	white-space: nowrap;
 }
 
-.navbar-brand {
-	font-size: 24px;
-	font-weight: bold;
-}
-
-.navbar-content {
-	margin-left: 40px;
-	margin-right: 40px;
-}
 .page-content {
 	margin: 40px;
 }

@@ -6,7 +6,9 @@ import Index from '@/components/Index'
 import PictureChoice from '@/components/PictureChoice'
 import QuestionList from '@/components/QuestionList'
 import Result from '@/components/Result'
+import ResultList from '@/components/ResultList'
 
+import models from '@/models'
 import store from '@/store'
 
 
@@ -20,10 +22,32 @@ export default new Router({
 			component: QuestionList,
 			props: route => {
 				return {
-					questions: store.state.questionpool.questions,
+					questions: store.state.pool.questions,
 				}
 			},
 		},
+		{
+			path: '/results/',
+			name: 'result-list',
+			component: ResultList,
+			props: route => {
+				return {
+					results: store.state.pool.results,
+				}
+			},
+		},
+		{
+			path: '/results/:index',
+			name: 'result-detail',
+			component: Result,
+			props: route => {
+				return {
+					result: store.state.pool.results[route.params.index],
+					canNavigate: true,
+				}
+			},
+		},
+
 		{
 			path: '/session/:groupIndex/image/:questionIndex',
 			name: 'image',
@@ -63,7 +87,7 @@ export default new Router({
 				const questionIndex = parseInt(route.params.questionIndex)
 				const step = store.getters.getSessionStep(groupIndex, questionIndex)
 
-				let next = {name: 'result'}
+				let next = {name: 'session-result'}
 				if (store.getters.getSessionStep(groupIndex, questionIndex + 1)) {
 					next = {
 						name: 'audio',
@@ -71,7 +95,7 @@ export default new Router({
 					}
 				} else if (store.getters.getSessionGroup(groupIndex + 1)) {
 					next = {
-						name: 'audio',
+						name: 'image',
 						params: {groupIndex: groupIndex + 1, questionIndex: 0},
 					}
 				}
@@ -87,14 +111,17 @@ export default new Router({
 		},
 		{
 			path: '/session/result',
-			name: 'result',
+			name: 'session-result',
 			component: Result,
 			props: route => {
 				return {
-					groups: store.state.qasession.groups,
+					result: new models.Result({
+						groups: store.state.qasession.groups,
+					}),
 				}
 			},
 		},
+
 		{
 			path: '/',
 			name: 'index',
