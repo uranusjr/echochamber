@@ -52,9 +52,12 @@ const mutations = {
 }
 
 const actions = {
-	SESSION_POPULATE({commit}, data) {
+	SESSION_POPULATE({commit, rootState}) {
 		return new Promise((resolve, reject) => {
-			commit('SESSION_POPULATE', data)
+			commit('SESSION_POPULATE', {
+				groupSize: rootState.project.groupSize,
+				questions: rootState.project.questions,
+			})
 			resolve()
 		})
 	},

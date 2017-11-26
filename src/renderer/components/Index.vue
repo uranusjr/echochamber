@@ -48,11 +48,7 @@ export default {
 	methods: {
 		submit() {
 			this.loading = true
-			const data = {
-				questions: this.$store.state.pool.questions,
-				groupSize: 3,
-			}
-			this.$store.dispatch('SESSION_POPULATE', data).then(() => {
+			this.$store.dispatch('SESSION_POPULATE').then(() => {
 				this.loading = false
 				this.$router.push({
 					name: 'image',

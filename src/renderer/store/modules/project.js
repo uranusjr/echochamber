@@ -48,7 +48,7 @@ const RESULTS = _.map(_.range(5), () =>
 				question: Object.freeze(question),
 				imageAnswer: {
 					choice: question.images[0],
-					usedMs: Math.random() * 1000,
+					msDiffs: [Math.random() * 1000],
 				},
 				audioAnswer: {blob: null},
 			}
@@ -59,19 +59,20 @@ const RESULTS = _.map(_.range(5), () =>
 
 
 const state = {
+	groupSize: 3,
 	questions: _.clone(QUESTIONS),
 	results: _.clone(RESULTS),
 }
 
 const mutations = {
-	POOL_ADD_RESULT(state, qasession) {
+	PROJECT_ADD_RESULT(state, qasession) {
 		state.results.push(qasession)
 	},
 }
 
 const actions = {
-	POOL_ADD_RESULT({commit}, data) {
-		commit('POOL_ADD_RESULT', data)
+	PROJECT_ADD_RESULT({commit}, data) {
+		commit('PROJECT_ADD_RESULT', data)
 	},
 }
 

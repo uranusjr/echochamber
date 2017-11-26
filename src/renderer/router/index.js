@@ -22,7 +22,7 @@ export default new Router({
 			component: QuestionList,
 			props: route => {
 				return {
-					questions: store.state.pool.questions,
+					questions: store.state.project.questions,
 				}
 			},
 		},
@@ -32,7 +32,7 @@ export default new Router({
 			component: ResultList,
 			props: route => {
 				return {
-					results: store.state.pool.results,
+					results: store.state.project.results,
 				}
 			},
 		},
@@ -42,7 +42,7 @@ export default new Router({
 			component: Result,
 			props: route => {
 				return {
-					result: store.state.pool.results[route.params.index],
+					result: store.state.project.results[route.params.index],
 					canNavigate: true,
 				}
 			},

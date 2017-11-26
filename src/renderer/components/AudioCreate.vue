@@ -75,6 +75,11 @@ export default {
 			return cls
 		},
 	},
+	watch: {
+		question() {
+			this.audioBlob = null
+		},
+	},
 	methods: {
 		toggleRecord() {
 			if (!this.recording) {

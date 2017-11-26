@@ -35,10 +35,7 @@
 						<image-box v-bind:src="step.question.getAssetUrl(step.imageAnswer.choice)">
 						</image-box>
 					</td>
-					<td class="is-nowrap">
-						<p>播放 <strong>{{ step.imageAnswer.msDiffs.length }}</strong> 次</p>
-						<p>用時 <strong>{{ step.imageAnswer.msDiffs[0] / 1000.0 }}</strong> 秒</p>
-					</td>
+					<td class="is-nowrap" v-html="getChoiceStatsDisplay(step)"></td>
 					<td>
 						<audio controls="controls">
 							<source type="audio/wav"
@@ -87,15 +84,23 @@ export default {
 				'is-primary': true,
 				'is-loading': this.saving,
 			}
-		}
+		},
 	},
 	methods: {
 		getBlobURL(blob) {
 			return blob ? window.URL.createObjectURL(blob) : ''
 		},
+		getChoiceStatsDisplay(step) {
+			const stats = step.imageAnswer.msDiffs
+			const secs = stats[0] / 1000.0
+			return (
+				`<p>播放 <strong>${stats.length}</strong> 次</p>` +
+				`<p>用時 <strong>${secs.toFixed(3)}</strong> 秒</p>`
+			)
+		},
 		endSession() {
 			this.saving = true
-			this.$store.dispatch('POOL_ADD_RESULT', this.result).then(() => {
+			this.$store.dispatch('PROJECT_ADD_RESULT', this.result).then(() => {
 				this.saving = false
 				this.$router.push({name: 'index'})
 			})

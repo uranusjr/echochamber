@@ -57,11 +57,11 @@ export default {
 		},
 	},
 	watch: {
-		question: function () {
+		question() {
 			this.audio.pause()
 			this.audio = this.createAudio(this.question)
 		},
-		audio: function () {
+		audio() {
 			this.beginTimes = []
 			this.playing = false
 		},
