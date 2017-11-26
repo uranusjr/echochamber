@@ -12,7 +12,7 @@
 		</span>
 	</h1>
 	<hr>
-	<div class="columns is-multiline" v-if="!!begin">
+	<div class="columns is-multiline" v-if="beginTimes.length !== 0">
 		<div class="column" v-for="imageName in question.images"
 					v-on:click="choose(imageName)">
 			<image-box class="choice" v-bind:src="question.getAssetUrl(imageName)">
@@ -27,6 +27,7 @@
 
 <script>
 
+import _ from 'lodash'
 import * as moment from 'moment'
 
 export default {
@@ -35,7 +36,7 @@ export default {
 		return {
 			audio: this.createAudio(this.question),
 			playing: false,
-			begin: null,
+			beginTimes: [],
 		}
 	},
 	computed: {
@@ -49,7 +50,7 @@ export default {
 			return cls
 		},
 		helpText() {
-			if (this.begin) {
+			if (this.beginTimes.length) {
 				return '點擊符合題目描述的圖片'
 			}
 			return '點擊按鈕播放題目'
@@ -61,7 +62,8 @@ export default {
 			this.audio = this.createAudio(this.question)
 		},
 		audio: function () {
-			this.begin = null
+			this.beginTimes = []
+			this.playing = false
 		},
 	},
 	methods: {
@@ -79,17 +81,16 @@ export default {
 			if (this.playing) {
 				return
 			}
-			if (!this.begin) {
-				this.begin = moment()
-			}
+			this.beginTimes.push(moment())
 			this.audio.play()
 		},
 		choose(imageFilename) {
+			const now = moment()
 			this.$store.dispatch('SESSION_SET_IMAGE_ANSWER', {
 				groupIndex: this.groupIndex,
 				questionIndex: this.questionIndex,
 				choice: imageFilename,
-				usedMs: moment().diff(this.begin),
+				msDiffs: _.map(this.beginTimes, t => now.diff(t)),
 			})
 			this.$router.push(this.next)
 		},

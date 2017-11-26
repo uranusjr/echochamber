@@ -43,7 +43,7 @@ const mutations = {
 	},
 	SESSION_SET_IMAGE_ANSWER(state, data) {
 		const info = getStep(state, data.groupIndex, data.questionIndex)
-		info.imageAnswer = {choice: data.choice, usedMs: data.usedMs}
+		info.imageAnswer = {choice: data.choice, msDiffs: data.msDiffs}
 	},
 	SESSION_SET_AUDIO_ANSWER(state, data) {
 		const info = getStep(state, data.groupIndex, data.questionIndex)

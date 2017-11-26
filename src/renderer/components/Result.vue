@@ -23,7 +23,7 @@
 				<tr>
 					<th class="is-nowrap">題目</th>
 					<th class="is-nowrap">選擇</th>
-					<th class="is-nowrap">用時</th>
+					<th class="is-nowrap">聽力資訊</th>
 					<th class="is-nowrap">復述</th>
 				</tr>
 			</thead>
@@ -35,7 +35,10 @@
 						<image-box v-bind:src="step.question.getAssetUrl(step.imageAnswer.choice)">
 						</image-box>
 					</td>
-					<td class="is-nowrap">{{ step.imageAnswer.usedMs / 1000.0 }} 秒</td>
+					<td class="is-nowrap">
+						<p>播放 <strong>{{ step.imageAnswer.msDiffs.length }}</strong> 次</p>
+						<p>用時 <strong>{{ step.imageAnswer.msDiffs[0] / 1000.0 }}</strong> 秒</p>
+					</td>
 					<td>
 						<audio controls="controls">
 							<source type="audio/wav"
@@ -82,7 +85,6 @@ export default {
 			return {
 				'button': true,
 				'is-primary': true,
-				'is-large': true,
 				'is-loading': this.saving,
 			}
 		}
