@@ -18,7 +18,9 @@ const getters = {
 const mutations = {
 	PROJECT_LOAD_FROM_FILESYSTEM(state, data) {
 		state.groupSize = data.groupSize
-		state.questions = _.map(data.questions, d => new Question(d))
+		state.questions = _.map(data.questions, d => {
+			return new Question(_.assign({root: data.root}, d))
+		})
 		state.results = []
 	},
 	PROJECT_ADD_RESULT(state, qasession) {

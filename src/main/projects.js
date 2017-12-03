@@ -12,7 +12,6 @@ import {getWindow} from './windows'
 
 let projectRootServer = null
 
-
 function getProjectRoot(rootDir) {
 	// Simply use the file protocol in production mode.
 	if (process.env.NODE_ENV === 'production') {
@@ -32,26 +31,50 @@ function getProjectRoot(rootDir) {
 }
 
 
-export function selectProjectDirectory() {
-	const selection = dialog.showOpenDialog(getWindow(), {
-		properties: ['openDirectory'],
-	})
-	if (!selection || selection.length < 1) {
-		return null
-	}
+const projectFileName = 'echoproject.json'
 
-	const rootDir = selection[0]
+function loadProjectFromFile(file) {
+	const data = JSON.parse(fs.readFileSync(file))
+
 	const project = {
 		groupSize: 3,
 		questions: [],
 	}
+	if (!data.groupSize) {
+		return null
+	}
+	if (!Array.isArray(data.questions)) {
+		return null
+	}
+	for (const d of data.questions) {
+		if (typeof d.name !== 'string' ||
+				typeof d.readthrough !== 'string' ||
+				!Array.isArray(d.images) ||
+				!d.images.every(e => typeof e === 'string')) {
+			continue
+		}
+		project.questions.push({
+			name: d.name,
+			images: d.images,
+			readthrough: d.readthrough,
+		})
+	}
+
+	return project
+}
+
+function createProject(rootDir) {
+	const project = {
+		groupSize: 3,
+		questions: [],
+	}
+
 	for (const entryName of fs.readdirSync(rootDir)) {
 		const entry = path.join(rootDir, entryName)
 		if (!fs.statSync(entry).isDirectory()) {
 			continue
 		}
 		const question = {
-			root: getProjectRoot(rootDir),
 			name: entryName,
 			images: [],
 			readthrough: null,
@@ -72,5 +95,31 @@ export function selectProjectDirectory() {
 		project.questions.push(question)
 	}
 
+	return project
+}
+
+export function selectProjectDirectory() {
+	const selection = dialog.showOpenDialog(getWindow(), {
+		properties: ['openDirectory'],
+	})
+	if (!selection || selection.length < 1) {
+		return null
+	}
+
+	const rootDir = selection[0]
+	const projectFile = path.join(rootDir, projectFileName)
+
+	let project = null
+	if (fs.existsSync(projectFile)) {
+		project = loadProjectFromFile(projectFile)
+	}
+	else {
+		project = createProject(rootDir)
+	}
+
+	if (project) {
+		fs.writeFileSync(projectFile, JSON.stringify(project, null, 4))
+		project.root = getProjectRoot(rootDir)
+	}
 	return project
 }
