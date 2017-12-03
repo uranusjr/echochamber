@@ -1,17 +1,16 @@
-import path from 'path'
-
 import * as moment from 'moment'
 
 
 export class Question {
 	constructor(opts) {
+		this.root = opts.root
 		this.name = opts.name
 		this.images = opts.images
 		this.readthrough = opts.readthrough
 	}
 
 	getAssetUrl(name) {
-		return path.join('static/questions', this.name, name)
+		return `${this.root}/${this.name}/${name}`
 	}
 }
 

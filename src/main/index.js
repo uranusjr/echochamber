@@ -1,33 +1,14 @@
-import {app, BrowserWindow} from 'electron'
+import path from 'path'
+import {app, ipcMain} from 'electron'
+
+import {selectProjectDirectory} from './projects'
+import {createWindow, getWindow} from './windows'
 
 /**
  * Set `__static` path to static files in production
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
 if (process.env.NODE_ENV !== 'development') {
-	global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
-}
-
-let mainWindow
-const winURL = process.env.NODE_ENV === 'development'
-	? 'http://localhost:9080'
-	: `file://${__dirname}/index.html`
-
-function createWindow () {
-	/**
-   * Initial window options
-   */
-	mainWindow = new BrowserWindow({
-		height: 563,
-		useContentSize: true,
-		width: 1000
-	})
-
-	mainWindow.loadURL(winURL)
-
-	mainWindow.on('closed', () => {
-		mainWindow = null
-	})
+	global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
 app.on('ready', createWindow)
@@ -39,10 +20,16 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-	if (mainWindow === null) {
+	if (getWindow() === null) {
 		createWindow()
 	}
 })
+
+ipcMain.on('select-project-directory', event => {
+	const project = selectProjectDirectory(event)
+	event.returnValue = project
+})
+
 
 /**
  * Auto Updater
@@ -63,3 +50,4 @@ app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
  */
+

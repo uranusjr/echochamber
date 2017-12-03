@@ -2,7 +2,18 @@
 
 <div class="index-page">
 
-	<form v-on:submit.prevent="submit">
+	<form v-if="!$store.getters.projectLoaded">
+		<div class="field is-grouped">
+			<div class="control">
+				<button type="button" class="button is-large is-primary"
+						v-on:click="chooseProjectDirectory">
+					選擇專案目錄
+				</button>
+			</div>
+		</div>
+	</form>
+
+	<form v-else v-on:submit.prevent="beginSession">
 		<div class="field is-grouped">
 			<div class="control">
 				<router-link v-bind:to="{name: 'question-list'}" class="button">
@@ -29,6 +40,8 @@
 
 <script>
 
+import {ipcRenderer} from 'electron'
+
 export default {
 	data() {
 		return {
@@ -46,7 +59,11 @@ export default {
 		},
 	},
 	methods: {
-		submit() {
+		chooseProjectDirectory() {
+			const projectData = ipcRenderer.sendSync('select-project-directory')
+			this.$store.dispatch('PROJECT_LOAD_FROM_FILESYSTEM', projectData)
+		},
+		beginSession() {
 			this.loading = true
 			this.$store.dispatch('SESSION_POPULATE').then(() => {
 				this.loading = false
