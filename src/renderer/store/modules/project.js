@@ -4,6 +4,7 @@ import {Question} from '@/models'
 
 
 const state = {
+	source: null,
 	groupSize: 0,
 	questions: [],
 	results: [],
@@ -11,12 +12,13 @@ const state = {
 
 const getters = {
 	projectLoaded(state) {
-		return state.questions.length > 0
+		return !!state.source
 	},
 }
 
 const mutations = {
 	PROJECT_LOAD_FROM_FILESYSTEM(state, data) {
+		state.source = data.source
 		state.groupSize = data.groupSize
 		state.questions = _.map(data.questions, d => {
 			return new Question(_.assign({root: data.root}, d))

@@ -30,6 +30,7 @@ function getProjectRoot(rootDir) {
 
 function createProject(rootDir) {
 	const project = {
+		source: rootDir,
 		root: getProjectRoot(rootDir),
 		groupSize: 3,
 		questions: [],
