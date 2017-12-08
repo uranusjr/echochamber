@@ -7,8 +7,6 @@ import {dialog} from 'electron'
 import * as finalhandler from 'finalhandler'
 import * as serveStatic from 'serve-static'
 
-import {getWindow} from './windows'
-
 
 let projectRootServer = null
 
@@ -30,41 +28,9 @@ function getProjectRoot(rootDir) {
 	return 'http://localhost:8888'
 }
 
-
-const projectFileName = 'echoproject.json'
-
-function loadProjectFromFile(file) {
-	const data = JSON.parse(fs.readFileSync(file))
-
-	const project = {
-		groupSize: 3,
-		questions: [],
-	}
-	if (!data.groupSize) {
-		return null
-	}
-	if (!Array.isArray(data.questions)) {
-		return null
-	}
-	for (const d of data.questions) {
-		if (typeof d.name !== 'string' ||
-				typeof d.readthrough !== 'string' ||
-				!Array.isArray(d.images) ||
-				!d.images.every(e => typeof e === 'string')) {
-			continue
-		}
-		project.questions.push({
-			name: d.name,
-			images: d.images,
-			readthrough: d.readthrough,
-		})
-	}
-
-	return project
-}
-
 function createProject(rootDir) {
 	const project = {
+		root: getProjectRoot(rootDir),
 		groupSize: 3,
 		questions: [],
 	}
@@ -98,8 +64,8 @@ function createProject(rootDir) {
 	return project
 }
 
-export function selectProjectDirectory() {
-	const selection = dialog.showOpenDialog(getWindow(), {
+export function selectProjectDirectory(browserWindow) {
+	const selection = dialog.showOpenDialog(browserWindow, {
 		properties: ['openDirectory'],
 	})
 	if (!selection || selection.length < 1) {
@@ -107,19 +73,21 @@ export function selectProjectDirectory() {
 	}
 
 	const rootDir = selection[0]
-	const projectFile = path.join(rootDir, projectFileName)
 
-	let project = null
-	if (fs.existsSync(projectFile)) {
-		project = loadProjectFromFile(projectFile)
-	}
-	else {
+	let project
+	try {
 		project = createProject(rootDir)
+		if (project.questions.length < 1) {
+			throw new Error('找不到問題')
+		}
+	} catch (e) {
+		dialog.showMessageBox(browserWindow, {
+			type: 'error',
+			title: '專案載入失敗',
+			message: e.toString(),
+			detail: `專案路徑：${rootDir}`,
+		})
 	}
 
-	if (project) {
-		fs.writeFileSync(projectFile, JSON.stringify(project, null, 4))
-		project.root = getProjectRoot(rootDir)
-	}
 	return project
 }

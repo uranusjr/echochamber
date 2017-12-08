@@ -4,7 +4,7 @@ import {Question} from '@/models'
 
 
 const state = {
-	groupSize: 3,
+	groupSize: 0,
 	questions: [],
 	results: [],
 }

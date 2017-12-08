@@ -26,7 +26,7 @@ app.on('activate', () => {
 })
 
 ipcMain.on('select-project-directory', event => {
-	const project = selectProjectDirectory(event)
+	const project = selectProjectDirectory(getWindow())
 	event.returnValue = project
 })
 

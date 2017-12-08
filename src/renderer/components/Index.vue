@@ -2,7 +2,7 @@
 
 <div class="index-page">
 
-	<form v-if="!$store.getters.projectLoaded">
+	<form v-if="!hasProject">
 		<div class="field is-grouped">
 			<div class="control">
 				<button type="button" class="button is-large is-primary"
@@ -57,11 +57,23 @@ export default {
 				'is-loading': this.loading,
 			}
 		},
+		hasProject() {
+			return this.$store.getters.projectLoaded
+		},
+	},
+	watch: {
+		hasProject(newVal) {
+			if (!newVal) {
+				this.chooseProjectDirectory()
+			}
+		},
 	},
 	methods: {
 		chooseProjectDirectory() {
 			const projectData = ipcRenderer.sendSync('select-project-directory')
-			this.$store.dispatch('PROJECT_LOAD_FROM_FILESYSTEM', projectData)
+			if (projectData) {
+				this.$store.dispatch('PROJECT_LOAD_FROM_FILESYSTEM', projectData)
+			}
 		},
 		beginSession() {
 			this.loading = true
@@ -73,6 +85,11 @@ export default {
 				})
 			})
 		},
+	},
+	created() {
+		if (!this.hasProject) {
+			this.chooseProjectDirectory()
+		}
 	},
 }
 
