@@ -47,6 +47,7 @@ function createProject(rootDir) {
 			readthrough: null,
 		}
 		for (const contentName of fs.readdirSync(entry)) {
+			// TODO: Support more formats? Or is there a better way, maybe via MIME?
 			switch (path.extname(contentName).toLowerCase()) {
 			case '.jpg':
 			case '.jpeg':
@@ -59,7 +60,7 @@ function createProject(rootDir) {
 				break
 			}
 		}
-		project.questions.push(question)
+		project.questions.push(Object.freeze(question))
 	}
 
 	return project

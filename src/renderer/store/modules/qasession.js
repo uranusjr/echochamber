@@ -1,7 +1,5 @@
 import _ from 'lodash'
 
-import {Question} from '@/models'
-
 
 const state = {
 	groups: [],
@@ -27,14 +25,9 @@ const getters = {
 
 const mutations = {
 	SESSION_POPULATE(state, {questions, groupSize}) {
-		const questionList = _.map(questions, data => {
-			const question = new Question({
-				name: data.name,
-				images: _.shuffle(data.images),
-				readthrough: data.readthrough,
-			})
+		const questionList = _.map(questions, question => {
 			return {
-				question: Object.freeze(question),
+				question: question,
 				imageAnswer: null,
 				audioAnswer: null,
 			}

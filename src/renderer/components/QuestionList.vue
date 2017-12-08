@@ -16,9 +16,7 @@
 			<span>{{ question.name }}</span>
 			<span>
 				<audio controls="controls" controlsList="nodownload">
-					<!-- TODO: Allow more formats? -->
-					<source type="audio/mp3"
-							v-bind:src="question.getAssetUrl(question.readthrough)">
+					<source v-bind:src="question.getAssetUrl(question.readthrough)">
 				</audio>
 			</span>
 		</h3>

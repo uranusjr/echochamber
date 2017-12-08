@@ -31,29 +31,28 @@
 				<template v-for="group in result.groups">
 				<tr v-for="step in group">
 					<th class="is-nowrap">{{ step.question.name }}</th>
-					<td>
-						<image-box v-bind:src="step.question.getAssetUrl(step.imageAnswer.choice)">
-						</image-box>
-					</td>
+					<td><image-box v-bind:src="getChoiceImage(step)"></image-box></td>
 					<td class="is-nowrap" v-html="getChoiceStatsDisplay(step)"></td>
 					<td>
 						<audio controls="controls">
-							<source type="audio/wav"
-									v-bind:src="getBlobURL(step.audioAnswer.blob)">
+							<source v-bind:src="getBlobURL(step.audioAnswer.blob)">
 						</audio>
 					</td>
 				</tr>
 				</template>
 			</tbody>
+			<tfoot>
+				<tr>
+					<th class="is-nowrap">筆記</th>
+					<td colspan="3" class="field">
+						<div class="control">
+							<textarea class="textarea" v-model="result.message"></textarea>
+						</div>
+						<p class="help">作答記錄的額外資訊，方便未來辨識本記錄。</p>
+					</td>
+				</tr>
+			</tfoot>
 		</table>
-
-		<div class="field">
-			<label class="label">筆記</label>
-			<div class="control">
-				<textarea class="textarea" v-model="result.message"></textarea>
-			</div>
-			<p class="help">作答記錄的額外資訊，方便未來辨識本記錄。</p>
-		</div>
 
 		<div class="field is-grouped">
 			<div class="control">
@@ -90,6 +89,9 @@ export default {
 		getBlobURL(blob) {
 			return blob ? window.URL.createObjectURL(blob) : ''
 		},
+		getChoiceImage(step) {
+			return step.question.getAssetUrl(step.imageAnswer.choice)
+		},
 		getChoiceStatsDisplay(step) {
 			const stats = step.imageAnswer.msDiffs
 			const secs = stats[0] / 1000.0
@@ -117,8 +119,11 @@ export default {
 
 	th, td {
 		padding: 0.75rem 2rem;
-		text-align: center;
 		vertical-align: middle;
+
+		&:not(.field) {
+			text-align: center;
+		}
 
 		.box {
 			max-width: 33vw;
