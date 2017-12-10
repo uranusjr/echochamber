@@ -22,7 +22,7 @@ export function promisify(towrap, opts) {
 
 /** Backport(?) fs.copyFile from Node 8.5.
  *
- * Electron is still on 8.3 so we need to make do.
+ * Electron is still on 8.2(?) so we need to make do.
  */
 export function copyFile(source, target, callback) {
 	let done = false
