@@ -10,6 +10,7 @@ import {copyFile, promisify} from './utils'
 
 
 const RESULTS_DIRNAME = '.results'
+const RESULT_METADATA_FILENAME = 'data.json'
 
 let projectRootServer = null
 
@@ -38,6 +39,7 @@ function createProject(rootDir) {
 		root: getProjectRoot(rootDir),
 		groupSize: 3,
 		questions: [],
+		results: [],
 	}
 
 	for (const entryName of fs.readdirSync(rootDir)) {
@@ -67,7 +69,24 @@ function createProject(rootDir) {
 				break
 			}
 		}
-		project.questions.push(Object.freeze(question))
+		project.questions.push(question)
+	}
+
+	const resultsDir = path.join(rootDir, RESULTS_DIRNAME)
+	if (fs.existsSync(resultsDir)) {
+		for (const resultName of fs.readdirSync(resultsDir)) {
+			const resultDir = path.join(resultsDir, resultName)
+			if (!fs.statSync(resultDir).isDirectory()) {
+				continue
+			}
+
+			const meta = path.join(resultDir, RESULT_METADATA_FILENAME)
+			if (!fs.statSync(meta).isFile()) {
+				continue
+			}
+			const result = JSON.parse(fs.readFileSync(meta))
+			project.results.push(result)
+		}
 	}
 
 	return project
@@ -120,20 +139,23 @@ export function saveResult(meta, data) {
 		}
 
 		// Create job to copy chosen image.
-		promises.push(promisify(copyFile)(
-			path.join(
-				meta.source,
-				answer.question.name,
-				answer.image.choice,
-			),
-			path.join(stepDir, answer.image.choice),
-		))
+		const imageTarget = path.join(stepDir, answer.image.choice)
+		if (!fs.existsSync(imageTarget)) {
+			promises.push(promisify(copyFile)(
+				path.join(
+					meta.source,
+					answer.question.name,
+					answer.image.choice,
+				),
+				imageTarget,
+			))
+		}
 
 		// Create job to save readback audio.
-		promises.push(promisify(fs.writeFile)(
-			path.join(stepDir, 'audio.wav'),
-			answer.audio.buffer,
-		))
+		const audioTarget = path.join(stepDir, 'audio.wav')
+		if (!fs.existsSync(audioTarget)) {
+			promises.push(promisify(fs.writeFile)(audioTarget, answer.audio.buffer))
+		}
 	}) })
 
 	// Create job to write result metadata.
@@ -148,7 +170,7 @@ export function saveResult(meta, data) {
 		})),
 	}
 	promises.push(promisify(fs.writeFile)(
-		path.join(resultDir, 'data.json'),
+		path.join(resultDir, RESULT_METADATA_FILENAME),
 		JSON.stringify(persistedData, null, 2),
 	))
 

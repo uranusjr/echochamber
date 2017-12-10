@@ -1,6 +1,3 @@
-import * as moment from 'moment'
-
-
 export class Question {
 	constructor(opts) {
 		this.root = opts.root
@@ -28,8 +25,7 @@ class Result {
 	constructor(opts) {
 		this.groups = opts.groups
 		this.message = opts.message || ''
-		this.timestamp = moment.isMoment(opts.timestamp) ?
-				opts.timestamp : moment(opts.timestamp, 'YYYYMMDD-HHmmss-SSS')
+		this.timestamp = opts.timestamp
 	}
 
 	get name() {

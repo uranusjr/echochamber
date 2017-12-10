@@ -1,7 +1,23 @@
 import _ from 'lodash'
 import {ipcRenderer} from 'electron'
+import * as moment from 'moment'
 
-import {PersistedResult, Question} from '@/models'
+import {Answer, PersistedResult, Question} from '@/models'
+
+
+function buildPersistedResult(data) {
+	return new PersistedResult({
+		root: state.root,
+		message: data.message,
+		timestamp: moment(data.name, 'YYYYMMDD-HHmmss-SSS'),
+		groups: _.map(data.groups, group => _.map(group, d => {
+			const question = state._questionMap.has(d.name) ?
+					state._questionMap.get(d.name) :
+					new Question({name: d.name, images: []})
+			return new Answer(_.assign(d, {question: question}))
+		}))
+	})
+}
 
 
 const state = {
@@ -9,6 +25,7 @@ const state = {
 	source: null,
 	groupSize: 0,
 	questions: [],
+	_questionMap: new Map(),
 	results: [],
 }
 
@@ -23,17 +40,17 @@ const mutations = {
 		state.root = data.root
 		state.source = data.source
 		state.groupSize = data.groupSize
-		state.questions = _.map(data.questions, d => {
-			return new Question(_.assign({root: data.root}, d))
-		})
-		state.results = []
+		state.questions = []
+		state._questionMap.clear()
+		for (const d of data.questions) {
+			const question = new Question(_.assign({root: data.root}, d))
+			state.questions.push(question)
+			state._questionMap.set(question.name, question)
+		}
+		state.results = _.map(data.results, buildPersistedResult)
 	},
 	PROJECT_SAVE_RESULT(state, data) {
-		const questionMap = new Map()
-		for (const question of state.questions) {
-			questionMap.set(question.name, question)
-		}
-		state.results.push(new PersistedResult(data))
+		state.results.push(buildPersistedResult(data))
 	},
 }
 
@@ -47,13 +64,8 @@ const actions = {
 				commit('PROJECT_SAVE_RESULT', persistedData)
 				resolve()
 			})
-			ipcRenderer.send('save-result', {
-				meta: {
-					source: rootState.project.source,
-					name: result.name,
-				},
-				data: result,
-			})
+			const meta = {source: rootState.project.source, name: result.name}
+			ipcRenderer.send('save-result', {meta: meta, data: result})
 		})
 	},
 }
