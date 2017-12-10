@@ -4,9 +4,12 @@ import path from 'path'
 import process from 'process'
 
 import {dialog} from 'electron'
-import * as finalhandler from 'finalhandler'
-import * as serveStatic from 'serve-static'
+import _ from 'lodash'
 
+import {copyFile, promisify} from './utils'
+
+
+const RESULTS_DIRNAME = '.results'
 
 let projectRootServer = null
 
@@ -20,7 +23,8 @@ function getProjectRoot(rootDir) {
 	if (projectRootServer) {
 		projectRootServer.close()
 	}
-	const serve = serveStatic(rootDir)
+	const serve = require('serve-static')(rootDir)
+	const finalhandler = require('finalhandler')
 	projectRootServer = http.createServer((request, response) => {
 		serve(request, response, finalhandler(request, response))
 	})
@@ -37,6 +41,9 @@ function createProject(rootDir) {
 	}
 
 	for (const entryName of fs.readdirSync(rootDir)) {
+		if (entryName === RESULTS_DIRNAME) {
+			continue
+		}
 		const entry = path.join(rootDir, entryName)
 		if (!fs.statSync(entry).isDirectory()) {
 			continue
@@ -92,4 +99,58 @@ export function selectProjectDirectory(browserWindow) {
 	}
 
 	return project
+}
+
+export function saveResult(meta, data) {
+	const resultsDir = path.join(meta.source, RESULTS_DIRNAME)
+	if (!fs.existsSync(resultsDir)) {
+		fs.mkdirSync(resultsDir)
+	}
+
+	const resultDir = path.join(resultsDir, meta.name)
+	if (!fs.existsSync(resultDir)) {
+		fs.mkdirSync(resultDir)
+	}
+
+	const promises = []
+	data.groups.forEach(group => { group.forEach(answer => {
+		const stepDir = path.join(resultDir, answer.question.name)
+		if (!fs.existsSync(stepDir)) {
+			fs.mkdirSync(stepDir)
+		}
+
+		// Create job to copy chosen image.
+		promises.push(promisify(copyFile)(
+			path.join(
+				meta.source,
+				answer.question.name,
+				answer.image.choice,
+			),
+			path.join(stepDir, answer.image.choice),
+		))
+
+		// Create job to save readback audio.
+		promises.push(promisify(fs.writeFile)(
+			path.join(stepDir, 'audio.wav'),
+			answer.audio.buffer,
+		))
+	}) })
+
+	// Create job to write result metadata.
+	const persistedData = {
+		name: meta.name,
+		message: data.message,
+		groups: _.map(data.groups, group => _.map(group, answer => {
+			const cloned = _.clone(answer)
+			cloned.audio = {name: 'audio.wav'}
+			cloned.question = {name: answer.question.name}
+			return cloned
+		})),
+	}
+	promises.push(promisify(fs.writeFile)(
+		path.join(resultDir, 'data.json'),
+		JSON.stringify(persistedData, null, 2),
+	))
+
+	return Promise.all(promises).then(() => persistedData)
 }

@@ -1,9 +1,11 @@
 import _ from 'lodash'
+import {ipcRenderer} from 'electron'
 
-import {Question} from '@/models'
+import {PersistedResult, Question} from '@/models'
 
 
 const state = {
+	root: null,
 	source: null,
 	groupSize: 0,
 	questions: [],
@@ -18,6 +20,7 @@ const getters = {
 
 const mutations = {
 	PROJECT_LOAD_FROM_FILESYSTEM(state, data) {
+		state.root = data.root
 		state.source = data.source
 		state.groupSize = data.groupSize
 		state.questions = _.map(data.questions, d => {
@@ -25,8 +28,12 @@ const mutations = {
 		})
 		state.results = []
 	},
-	PROJECT_ADD_RESULT(state, qasession) {
-		state.results.push(qasession)
+	PROJECT_SAVE_RESULT(state, data) {
+		const questionMap = new Map()
+		for (const question of state.questions) {
+			questionMap.set(question.name, question)
+		}
+		state.results.push(new PersistedResult(data))
 	},
 }
 
@@ -34,8 +41,20 @@ const actions = {
 	PROJECT_LOAD_FROM_FILESYSTEM({commit}, data) {
 		commit('PROJECT_LOAD_FROM_FILESYSTEM', data)
 	},
-	PROJECT_ADD_RESULT({commit}, data) {
-		commit('PROJECT_ADD_RESULT', data)
+	PROJECT_SAVE_RESULT({commit, rootState}, result) {
+		return new Promise((resolve, reject) => {
+			ipcRenderer.on('save-result-success', (event, persistedData) => {
+				commit('PROJECT_SAVE_RESULT', persistedData)
+				resolve()
+			})
+			ipcRenderer.send('save-result', {
+				meta: {
+					source: rootState.project.source,
+					name: result.name,
+				},
+				data: result,
+			})
+		})
 	},
 }
 

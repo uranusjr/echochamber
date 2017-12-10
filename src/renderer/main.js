@@ -3,7 +3,7 @@ import './styles/site.scss'
 import Vue from 'vue'
 
 import App from './App'
-import router from './router'
+import router from './routes'
 import store from './store'
 
 import ImageBox from '@/components/_ImageBox'

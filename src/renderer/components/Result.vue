@@ -16,7 +16,7 @@
 		</ul>
 	</nav>
 
-	<form v-on:submit.prevent="endSession">
+	<form v-on:submit.prevent="saveResult">
 
 		<table class="table is-fullwidth">
 			<thead>
@@ -29,13 +29,15 @@
 			</thead>
 			<tbody>
 				<template v-for="group in result.groups">
-				<tr v-for="step in group">
-					<th class="is-nowrap">{{ step.question.name }}</th>
-					<td><image-box v-bind:src="getChoiceImage(step)"></image-box></td>
-					<td class="is-nowrap" v-html="getChoiceStatsDisplay(step)"></td>
+				<tr v-for="answer in group">
+					<th class="is-nowrap">{{ answer.question.name }}</th>
+					<td>
+						<image-box v-bind:src="result.getImageChoice(answer)"></image-box>
+					</td>
+					<td class="is-nowrap" v-html="getChoiceStatsDisplay(answer)"></td>
 					<td>
 						<audio controls="controls">
-							<source v-bind:src="getBlobURL(step.audioAnswer.blob)">
+							<source v-bind:src="result.getAudio(answer)">
 						</audio>
 					</td>
 				</tr>
@@ -80,31 +82,29 @@ export default {
 		submitClass() {
 			return {
 				'button': true,
+				'is-large': true,
 				'is-primary': true,
 				'is-loading': this.saving,
 			}
 		},
 	},
 	methods: {
-		getBlobURL(blob) {
-			return blob ? window.URL.createObjectURL(blob) : ''
-		},
-		getChoiceImage(step) {
-			return step.question.getAssetUrl(step.imageAnswer.choice)
-		},
-		getChoiceStatsDisplay(step) {
-			const stats = step.imageAnswer.msDiffs
+		getChoiceStatsDisplay(answer) {
+			const stats = answer.image.msDiffs
 			const secs = stats[0] / 1000.0
 			return (
 				`<p>播放 <strong>${stats.length}</strong> 次</p>` +
 				`<p>用時 <strong>${secs.toFixed(3)}</strong> 秒</p>`
 			)
 		},
-		endSession() {
+		saveResult() {
 			this.saving = true
-			this.$store.dispatch('PROJECT_ADD_RESULT', this.result).then(() => {
+			this.$store.dispatch('PROJECT_SAVE_RESULT', this.result).then(() => {
 				this.saving = false
 				this.$router.push({name: 'index'})
+			}).catch(e => {
+				console.error(e)
+				this.saving = false
 			})
 		},
 	},

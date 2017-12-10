@@ -1,5 +1,7 @@
 import _ from 'lodash'
 
+import {Answer} from '@/models'
+
 
 const state = {
 	groups: [],
@@ -25,22 +27,25 @@ const getters = {
 
 const mutations = {
 	SESSION_POPULATE(state, {questions, groupSize}) {
-		const questionList = _.map(questions, question => {
-			return {
+		const answers = _.map(questions, question => {
+			return new Answer({
 				question: question,
-				imageAnswer: null,
-				audioAnswer: null,
-			}
+				image: null,
+				audio: null,
+			})
 		})
-		state.groups = _.chunk(_.shuffle(questionList), groupSize)
+		state.groups = _.chunk(_.shuffle(answers), groupSize)
 	},
 	SESSION_SET_IMAGE_ANSWER(state, data) {
-		const info = getStep(state, data.groupIndex, data.questionIndex)
-		info.imageAnswer = {choice: data.choice, msDiffs: data.msDiffs}
+		const answer = getStep(state, data.groupIndex, data.questionIndex)
+		answer.image = {
+			choice: data.choice,
+			msDiffs: data.msDiffs,
+		}
 	},
 	SESSION_SET_AUDIO_ANSWER(state, data) {
-		const info = getStep(state, data.groupIndex, data.questionIndex)
-		info.audioAnswer = {blob: data.blob}
+		const answer = getStep(state, data.groupIndex, data.questionIndex)
+		answer.audio = {blob: data.blob, buffer: data.buffer}
 	},
 }
 
@@ -58,7 +63,21 @@ const actions = {
 		commit('SESSION_SET_IMAGE_ANSWER', data)
 	},
 	SESSION_SET_AUDIO_ANSWER({commit}, data) {
-		commit('SESSION_SET_AUDIO_ANSWER', data)
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader()
+			reader.onload = function () {
+				if (reader.readyState === FileReader.DONE) {
+					data.buffer = Buffer.from(reader.result)
+					commit('SESSION_SET_AUDIO_ANSWER', data)
+					resolve()
+				}
+			}
+			reader.onerror = function (error) {
+				reader.abort()
+				reject(error)
+			}
+			reader.readAsArrayBuffer(data.blob)
+		})
 	},
 }
 

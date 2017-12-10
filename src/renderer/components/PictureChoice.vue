@@ -13,7 +13,7 @@
 	</h1>
 	<hr>
 	<div class="columns is-multiline" v-if="beginTimes.length !== 0">
-		<div class="column" v-for="imageName in question.images"
+		<div class="column" v-for="imageName in shuffledImages"
 					v-on:click="choose(imageName)">
 			<image-box class="choice" v-bind:src="question.getAssetUrl(imageName)">
 			</image-box>
@@ -54,6 +54,9 @@ export default {
 				return '點擊符合題目描述的圖片'
 			}
 			return '點擊按鈕播放題目'
+		},
+		shuffledImages() {
+			return _.shuffle(this.question.images)
 		},
 	},
 	watch: {

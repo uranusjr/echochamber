@@ -1,7 +1,7 @@
 import path from 'path'
 import {app, ipcMain} from 'electron'
 
-import {selectProjectDirectory} from './projects'
+import {selectProjectDirectory, saveResult} from './projects'
 import {createWindow, getWindow} from './windows'
 
 /**
@@ -28,6 +28,12 @@ app.on('activate', () => {
 ipcMain.on('select-project-directory', event => {
 	const project = selectProjectDirectory(getWindow())
 	event.returnValue = project
+})
+
+ipcMain.on('save-result', (event, {meta, data}) => {
+	saveResult(meta, data).then(data => {
+		event.sender.send('save-result-success', data)
+	})
 })
 
 

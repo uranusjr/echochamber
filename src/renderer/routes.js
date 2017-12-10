@@ -1,3 +1,4 @@
+import * as moment from 'moment'
 import Vue from 'vue'
 import Router from 'vue-router'
 
@@ -8,7 +9,7 @@ import QuestionList from '@/components/QuestionList'
 import Result from '@/components/Result'
 import ResultList from '@/components/ResultList'
 
-import models from '@/models'
+import {SessionResult} from '@/models'
 import store from '@/store'
 
 
@@ -37,7 +38,7 @@ export default new Router({
 			},
 		},
 		{
-			path: '/results/:index',
+			path: '/results/:index',	// TODO: Index with name instead.
 			name: 'result-detail',
 			component: Result,
 			props: route => {
@@ -104,7 +105,7 @@ export default new Router({
 					groupIndex: groupIndex,
 					questionIndex: questionIndex,
 					question: step.question,
-					imageName: step.imageAnswer.choice,
+					imageName: step.image.choice,
 					next: next,
 				}
 			},
@@ -115,8 +116,9 @@ export default new Router({
 			component: Result,
 			props: route => {
 				return {
-					result: new models.Result({
+					result: new SessionResult({
 						groups: store.state.qasession.groups,
+						timestamp: moment(),
 					}),
 				}
 			},
