@@ -49,6 +49,9 @@ const mutations = {
 		}
 		state.results = _.map(data.results, buildPersistedResult)
 	},
+	PROJECT_SET_GROUP_SIZE(state, size) {
+		state.groupSize = size
+	},
 	PROJECT_SAVE_RESULT(state, data) {
 		state.results.push(buildPersistedResult(data))
 	},
@@ -57,6 +60,9 @@ const mutations = {
 const actions = {
 	PROJECT_LOAD_FROM_FILESYSTEM({commit}, data) {
 		commit('PROJECT_LOAD_FROM_FILESYSTEM', data)
+	},
+	PROJECT_SET_GROUP_SIZE({commit}, data) {
+		commit('PROJECT_SET_GROUP_SIZE', data)
 	},
 	PROJECT_SAVE_RESULT({commit, rootState}, result) {
 		return new Promise((resolve, reject) => {

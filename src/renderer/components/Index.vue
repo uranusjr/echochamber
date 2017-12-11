@@ -15,19 +15,36 @@
 
 	<form v-else v-on:submit.prevent="beginSession">
 		<div class="field is-grouped">
-			<div class="control">
+			<div class="control is-expanded">
 				<router-link v-bind:to="{name: 'question-list'}" class="button">
 					問題列表
 				</router-link>
 			</div>
-			<div class="control">
+			<div class="control is-expanded">
 				<router-link v-bind:to="{name: 'result-list'}" class="button">
 					結果列表
 				</router-link>
 			</div>
 		</div>
-		<div class="submit field is-grouped">
-			<div class="control">
+
+		<hr>
+
+		<div class="field is-horizontal">
+			<div class="field-label">
+				<label class="label" for="id_group_size">分組題數</label>
+			</div>
+			<div class="field-body">
+				<div class="field">
+					<div class="control is-expanded">
+						<input class="input" type="number" id="id_group_size"
+								v-model="groupSize">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="field is-grouped">
+			<div class="control is-expanded">
 				<button type="submit" v-bind:class="submitClass">開始作答</button>
 			</div>
 		</div>
@@ -59,6 +76,14 @@ export default {
 		},
 		hasProject() {
 			return this.$store.getters.projectLoaded
+		},
+		groupSize: {
+			get() {
+				return this.$store.state.project.groupSize
+			},
+			set(val) {
+				this.$store.dispatch('PROJECT_SET_GROUP_SIZE', Number(val))
+			},
 		},
 	},
 	watch: {
@@ -96,7 +121,7 @@ export default {
 </script>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .index-page {
 	width: 100%;
@@ -109,8 +134,23 @@ export default {
 	form {
 		padding-bottom: 10vh;	// Add padding for visual compensation.
 
-		.submit.field {
+		> .field {
+			margin-top: 2rem;
+			margin-bottom: 2rem;
 			justify-content: center;
+
+			.is-expanded > .button {
+				width: 100%;
+			}
+		}
+
+		.field-label {
+			flex-grow: 0;
+			white-space: nowrap;
+
+			label {
+				line-height: 225%;
+			}
 		}
 	}
 }
