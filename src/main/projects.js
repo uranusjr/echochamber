@@ -8,6 +8,7 @@ import _ from 'lodash'
 import {copyFile, promisify} from './utils'
 
 
+const PROJECT_META_NAME = 'echochamberproject.json'
 const RESULTS_DIRNAME = '.results'
 const RESULT_METADATA_FILENAME = 'data.json'
 
@@ -36,15 +37,33 @@ function createProject(rootDir) {
 	const project = {
 		source: rootDir,
 		root: getProjectRoot(rootDir),
-		groupSize: 3,
+		groupSize: 5,
 		questions: [],
 		results: [],
 	}
 
+	const meta = path.join(rootDir, PROJECT_META_NAME)
+	if (fs.existsSync(meta)) {
+		try {
+			const data = JSON.parse(fs.readFileSync(meta))
+			if (typeof data.groupSize === 'number') {
+				project.groupSize = data.groupSize
+			} else {
+				console.error(
+					`ignored group size ${data.groupSize} ` +
+					`of type ${typeof data.groupSize}`,
+				)
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
 	for (const entryName of fs.readdirSync(rootDir)) {
-		if (entryName === RESULTS_DIRNAME) {
+		if (entryName === RESULTS_DIRNAME || entryName === PROJECT_META_NAME) {
 			continue
 		}
+
 		const entry = path.join(rootDir, entryName)
 		if (!fs.statSync(entry).isDirectory()) {
 			continue
@@ -89,6 +108,13 @@ function createProject(rootDir) {
 	}
 
 	return project
+}
+
+export function saveProjectMeta(rootDir, data) {
+	return promisify(fs.writeFile)(
+		path.join(rootDir, PROJECT_META_NAME),
+		JSON.stringify(data, null, 2),
+	)
 }
 
 export function selectProjectDirectory(browserWindow) {

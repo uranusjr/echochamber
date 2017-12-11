@@ -82,7 +82,11 @@ export default {
 				return this.$store.state.project.groupSize
 			},
 			set(val) {
-				this.$store.dispatch('PROJECT_SET_GROUP_SIZE', Number(val))
+				this.loading = true
+				const meta = {groupSize: Number(val)}
+				this.$store.dispatch('PROJECT_SET_PROJECT_META', meta).then(() => {
+					this.loading = false
+				})
 			},
 		},
 	},
