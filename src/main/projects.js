@@ -1,5 +1,4 @@
 import fs from 'fs'
-import http from 'http'
 import path from 'path'
 import process from 'process'
 
@@ -26,7 +25,7 @@ function getProjectRoot(rootDir) {
 	}
 	const serve = require('serve-static')(rootDir)
 	const finalhandler = require('finalhandler')
-	projectRootServer = http.createServer((request, response) => {
+	projectRootServer = require('http').createServer((request, response) => {
 		serve(request, response, finalhandler(request, response))
 	})
 	projectRootServer.listen(8888)
