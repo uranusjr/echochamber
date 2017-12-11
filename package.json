@@ -1,6 +1,6 @@
 {
   "name": "echochamber",
-  "version": "1.0",
+  "version": "1.0.0",
   "author": "Tzu-ping Chung <uranusjr@gmail.com>",
   "description": "Application for research of syntactic priming comprehension and production",
   "private": true,
