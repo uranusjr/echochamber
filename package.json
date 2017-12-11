@@ -1,8 +1,9 @@
 {
   "name": "echochamber",
-  "version": "0.0.0",
+  "version": "1.0",
   "author": "Tzu-ping Chung <uranusjr@gmail.com>",
   "description": "Application for research of syntactic priming comprehension and production",
+  "private": true,
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
