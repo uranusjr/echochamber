@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import * as moment from 'moment'
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -33,17 +34,17 @@ export default new Router({
 			component: ResultList,
 			props: route => {
 				return {
-					results: store.state.project.results,
+					results: _.map(store.state.project.results),
 				}
 			},
 		},
 		{
-			path: '/results/:index',	// TODO: Index with name instead.
+			path: '/results/:name',
 			name: 'result-detail',
 			component: Result,
 			props: route => {
 				return {
-					result: store.state.project.results[route.params.index],
+					result: store.state.project.results[route.params.name],
 					canNavigate: true,
 				}
 			},

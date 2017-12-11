@@ -25,7 +25,7 @@
 				<td class="result-message">{{ result.message }}</td>
 				<td class="is-nowrap is-narrow">
 					<router-link class="button"
-							v-bind:to="{name: 'result-detail', params: {index: i}}">
+							v-bind:to="{name: 'result-detail', params: {name: result.name}}">
 						詳細
 					</router-link>
 				</td>

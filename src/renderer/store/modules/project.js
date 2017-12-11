@@ -11,9 +11,8 @@ function buildPersistedResult(data) {
 		message: data.message,
 		timestamp: moment(data.name, 'YYYYMMDD-HHmmss-SSS'),
 		groups: _.map(data.groups, group => _.map(group, d => {
-			const question = state._questionMap.has(d.name) ?
-					state._questionMap.get(d.name) :
-					new Question({name: d.name, images: []})
+			const question = state._questionMap[d.question.name] ||
+					new Question(d.question)
 			return new Answer(_.assign(d, {question: question}))
 		}))
 	})
@@ -25,8 +24,8 @@ const state = {
 	source: null,
 	groupSize: 0,
 	questions: [],
-	_questionMap: new Map(),
-	results: [],
+	_questionMap: {},
+	results: {},
 }
 
 const getters = {
@@ -41,19 +40,22 @@ const mutations = {
 		state.source = data.source
 		state.groupSize = data.groupSize
 		state.questions = []
-		state._questionMap.clear()
+		state._questionMap = {}
 		for (const d of data.questions) {
 			const question = new Question(_.assign({root: data.root}, d))
 			state.questions.push(question)
-			state._questionMap.set(question.name, question)
+			state._questionMap[question.name] = question
 		}
-		state.results = _.map(data.results, buildPersistedResult)
+		state.results = {}
+		data.results.forEach(data => {
+			state.results[data.name] = buildPersistedResult(data)
+		})
 	},
 	PROJECT_SET_PROJECT_META(state, data) {
 		state.groupSize = data.groupSize
 	},
 	PROJECT_SAVE_RESULT(state, data) {
-		state.results.push(buildPersistedResult(data))
+		state.results[data.name] = buildPersistedResult(data)
 	},
 }
 

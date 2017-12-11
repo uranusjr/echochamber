@@ -2,7 +2,7 @@ export class Question {
 	constructor(opts) {
 		this.root = opts.root
 		this.name = opts.name
-		this.images = opts.images
+		this.images = opts.images || []
 		this.readthrough = opts.readthrough
 	}
 
@@ -50,10 +50,16 @@ export class PersistedResult extends Result {
 	}
 
 	getImageChoice(answer) {
-		return `${this.root}/.results/${this.name}/${answer.image.choice}`
+		return [
+			this.root, '.results',
+			this.name, answer.question.name, answer.image.choice,
+		].join('/')
 	}
 
 	getAudio(answer) {
-		return `${this.root}/.results/${this.name}/${answer.audio.name}`
+		return [
+			this.root, '.results',
+			this.name, answer.question.name, answer.audio.name,
+		].join('/')
 	}
 }
