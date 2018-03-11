@@ -8,7 +8,7 @@ import {Answer, PersistedResult, Question} from '@/models'
 function buildPersistedResult(data) {
 	return new PersistedResult({
 		root: state.root,
-		message: data.message,
+		subjectName: data.subjectName,
 		timestamp: moment(data.name, 'YYYYMMDD-HHmmss-SSS'),
 		groups: _.map(data.groups, group => _.map(group, d => {
 			const question = state._questionMap[d.question.name] ||

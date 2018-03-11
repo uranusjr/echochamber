@@ -4,6 +4,7 @@ import {Answer} from '@/models'
 
 
 const state = {
+	subjectName: '',
 	groups: [],
 }
 
@@ -26,7 +27,8 @@ const getters = {
 }
 
 const mutations = {
-	SESSION_POPULATE(state, {questions, groupSize}) {
+	SESSION_POPULATE(state, {subjectName, questions, groupSize}) {
+		state.subjectName = subjectName
 		const answers = _.map(questions, question => {
 			return new Answer({
 				question: question,
@@ -50,9 +52,10 @@ const mutations = {
 }
 
 const actions = {
-	SESSION_POPULATE({commit, rootState}) {
+	SESSION_POPULATE({commit, rootState}, {subjectName}) {
 		return new Promise((resolve, reject) => {
 			commit('SESSION_POPULATE', {
+				subjectName: subjectName,
 				groupSize: rootState.project.groupSize,
 				questions: rootState.project.questions,
 			})

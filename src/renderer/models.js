@@ -23,8 +23,8 @@ export class Answer {
 
 class Result {
 	constructor(opts) {
+		this.subjectName = opts.subjectName || ''
 		this.groups = opts.groups
-		this.message = opts.message || ''
 		this.timestamp = opts.timestamp
 	}
 

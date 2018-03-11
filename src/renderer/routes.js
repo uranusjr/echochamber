@@ -118,6 +118,7 @@ export default new Router({
 			props: route => {
 				return {
 					result: new SessionResult({
+						subjectName: store.state.qasession.subjectName,
 						groups: store.state.qasession.groups,
 						timestamp: moment(),
 					}),

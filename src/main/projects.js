@@ -186,7 +186,7 @@ export function saveResult(meta, data) {
 	// Create job to write result metadata.
 	const persistedData = {
 		name: meta.name,
-		message: data.message,
+		subjectName: data.subjectName,
 		groups: _.map(data.groups, group => _.map(group, answer => {
 			const cloned = _.clone(answer)
 			cloned.audio = {name: 'audio.wav'}

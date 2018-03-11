@@ -43,17 +43,6 @@
 				</tr>
 				</template>
 			</tbody>
-			<tfoot>
-				<tr>
-					<th class="is-nowrap">筆記</th>
-					<td colspan="3" class="field">
-						<div class="control">
-							<textarea class="textarea" v-model="result.message"></textarea>
-						</div>
-						<p class="help">作答記錄的額外資訊，方便未來辨識本記錄。</p>
-					</td>
-				</tr>
-			</tfoot>
 		</table>
 
 		<p v-if="!administration" class="field">

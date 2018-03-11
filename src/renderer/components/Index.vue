@@ -43,9 +43,26 @@
 			</div>
 		</div>
 
+		<div class="field is-horizontal">
+			<div class="field-label">
+				<label class="label" for="id_subject_name">受試代號</label>
+			</div>
+			<div class="field-body">
+				<div class="field">
+					<div class="control is-expanded">
+						<input class="input" type="text" id="id_subject_name"
+								v-model="subjectName">
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div class="field is-grouped">
 			<div class="control is-expanded">
-				<button type="submit" v-bind:class="submitClass">開始作答</button>
+				<button type="submit"
+						v-bind:class="submitClass" v-bind:disabled="!subjectName">
+					開始作答
+				</button>
 			</div>
 		</div>
 	</form>
@@ -63,6 +80,7 @@ export default {
 	data() {
 		return {
 			loading: false,
+			subjectName: '',
 		}
 	},
 	computed: {
@@ -106,7 +124,8 @@ export default {
 		},
 		beginSession() {
 			this.loading = true
-			this.$store.dispatch('SESSION_POPULATE').then(() => {
+			const data = {subjectName: this.subjectName}
+			this.$store.dispatch('SESSION_POPULATE', data).then(() => {
 				this.loading = false
 				this.$router.push({
 					name: 'image',

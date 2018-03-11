@@ -14,7 +14,7 @@
 	<table class="table is-fullwidth is-striped">
 		<thead>
 			<th class="is-nowrap is-narrow">作答時間</th>
-			<th>筆記</th>
+			<th>受試代號</th>
 			<th></th>
 		</thead>
 		<tbody>
@@ -22,7 +22,7 @@
 				<td class="is-nowrap">
 					{{ result.timestamp.format('YYYY-MM-DD HH:mm:ss') }}
 				</td>
-				<td class="result-message">{{ result.message }}</td>
+				<td class="result-message">{{ result.subjectName }}</td>
 				<td class="is-nowrap is-narrow">
 					<router-link class="button"
 							v-bind:to="{name: 'result-detail', params: {name: result.name}}">
