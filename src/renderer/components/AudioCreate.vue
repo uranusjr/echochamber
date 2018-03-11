@@ -14,21 +14,19 @@
 		</div>
 		<div class="tile is-vertical is-parent">
 			<div class="tile is-child control-tile">
-				<span class="fa fa-stack fa-5x" v-on:click="toggleRecord()">
+				<span class="fa fa-stack fa-5x"
+						v-if="!recording && !saving" v-on:click="startRecord()">
 					<span class="fa fa-circle-thin fa-stack-2x"></span>
 					<span v-bind:class="recorderIconClass"></span>
 				</span>
+				<button type="button" v-if="!saving" v-bind:class="submitButtonClass"
+						v-on:click="saveAudioBlob">
+					送出
+				</button>
 			</div>
 			<div class="tile is-child">
 				<wave-display v-if="recording" v-bind:values="waveBars">
 				</wave-display>
-				<div class="control-tile">
-					<button v-if="audioBlob && !recording"
-							type="button" v-bind:class="submitButtonClass"
-							v-on:click="saveAudioBlob">
-						送出
-					</button>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -62,7 +60,6 @@ export default {
 			recorder: recorder,
 			recording: false,
 			waveBars: [],
-			audioBlob: null,
 		}
 	},
 	computed: {
@@ -83,30 +80,23 @@ export default {
 			}
 		}
 	},
-	watch: {
-		question() {
-			this.audioBlob = null
-		},
-	},
 	methods: {
-		toggleRecord() {
+		startRecord() {
 			if (!this.recording) {
 				this.recorder.start().then(() => {
 					this.recording = true
-				})
-			} else {
-				this.recorder.stop().then(data => {
-					this.audioBlob = data.blob
-					this.recording = false
 				})
 			}
 		},
 		saveAudioBlob() {
 			this.saving = true
-			this.$store.dispatch('SESSION_SET_AUDIO_ANSWER', {
-				groupIndex: this.groupIndex,
-				questionIndex: this.questionIndex,
-				blob: this.audioBlob,
+			this.recorder.stop().then(data => {
+				this.recording = false
+				return this.$store.dispatch('SESSION_SET_AUDIO_ANSWER', {
+					groupIndex: this.groupIndex,
+					questionIndex: this.questionIndex,
+					blob: data.blob,
+				})
 			}).then(() => {
 				this.saving = false
 				this.$router.push(this.next)
