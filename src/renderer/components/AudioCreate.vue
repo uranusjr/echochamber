@@ -19,8 +19,8 @@
 					<span class="fa fa-circle-thin fa-stack-2x"></span>
 					<span v-bind:class="recorderIconClass"></span>
 				</span>
-				<button type="button" v-if="!saving" v-bind:class="submitButtonClass"
-						v-on:click="saveAudioBlob">
+				<button type="button" v-if="recording && !saving"
+						v-bind:class="submitButtonClass" v-on:click="saveAudioBlob">
 					送出
 				</button>
 			</div>
