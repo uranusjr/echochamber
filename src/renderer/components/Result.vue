@@ -4,7 +4,7 @@
 
 	<h1 class="title">結果</h1>
 
-	<nav v-if="canNavigate" class="breadcrumb" aria-label="breadcrumbs">
+	<nav v-if="administration" class="breadcrumb" aria-label="breadcrumbs">
 		<ul>
 			<li><router-link v-bind:to="{name: 'index'}">首頁</router-link></li>
 			<li><router-link v-bind:to="{name: 'result-list'}">作答記錄</router-link></li>
@@ -18,7 +18,7 @@
 
 	<form v-on:submit.prevent="saveResult">
 
-		<table class="table is-fullwidth">
+		<table v-if="administration" class="table is-fullwidth">
 			<thead>
 				<tr>
 					<th class="is-nowrap">題目</th>
@@ -56,6 +56,10 @@
 			</tfoot>
 		</table>
 
+		<p v-if="!administration" class="field">
+			感謝作答。請按「儲存」結束答題程序。
+		</p>
+
 		<div class="field is-grouped">
 			<div class="control">
 				<button type="submit" v-bind:class="submitClass">儲存</button>
@@ -72,7 +76,7 @@
 <script>
 
 export default {
-	props: ['canNavigate', 'result'],
+	props: ['administration', 'result'],
 	data() {
 		return {
 			saving: false,

@@ -45,7 +45,7 @@ export default new Router({
 			props: route => {
 				return {
 					result: store.state.project.results[route.params.name],
-					canNavigate: true,
+					administration: true,
 				}
 			},
 		},
@@ -121,6 +121,7 @@ export default new Router({
 						groups: store.state.qasession.groups,
 						timestamp: moment(),
 					}),
+					administration: false,
 				}
 			},
 		},
