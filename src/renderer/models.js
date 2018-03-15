@@ -63,6 +63,10 @@ class Result {
 	get name() {
 		return this.timestamp.format('YYYYMMDD-HHmmss-SSS')
 	}
+
+	get sortedAnswers() {
+		return _.sortBy(_.sum(this.groups), answer => answer.question.name)
+	}
 }
 
 export class SessionResult extends Result {

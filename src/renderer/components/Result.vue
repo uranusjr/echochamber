@@ -29,8 +29,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<template v-for="group in result.groups">
-				<tr v-for="answer in group">
+				<tr v-for="answer in result.sortedAnswers">
 					<th class="is-nowrap">{{ answer.question.name }}</th>
 					<td>
 						<image-box v-bind:src="result.getImageChoice(answer)"></image-box>
@@ -46,7 +45,6 @@
 						</audio>
 					</td>
 				</tr>
-				</template>
 			</tbody>
 		</table>
 
