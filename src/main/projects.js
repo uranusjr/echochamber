@@ -78,8 +78,10 @@ function createProject(rootDir) {
 			switch (path.extname(contentName).toLowerCase()) {
 			case '.jpg':
 			case '.jpeg':
+			case '.png':
 				question.images.push(contentName)
 				break
+			case '.m4a':
 			case '.mp3':
 				question.readthrough = contentName
 				break
