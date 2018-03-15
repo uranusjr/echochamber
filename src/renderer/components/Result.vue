@@ -23,6 +23,7 @@
 				<tr>
 					<th class="is-nowrap">題目</th>
 					<th class="is-nowrap">選擇</th>
+					<th class="is-nowrap">正確</th>
 					<th class="is-nowrap">聽力資訊</th>
 					<th class="is-nowrap">復述</th>
 				</tr>
@@ -33,6 +34,10 @@
 					<th class="is-nowrap">{{ answer.question.name }}</th>
 					<td>
 						<image-box v-bind:src="result.getImageChoice(answer)"></image-box>
+					</td>
+					<td>
+						<span v-if="answer.isImageCorrect" class="fa fa-check"></span>
+						<span v-else class="fa fa-times"></span>
 					</td>
 					<td class="is-nowrap" v-html="getChoiceStatsDisplay(answer)"></td>
 					<td>
