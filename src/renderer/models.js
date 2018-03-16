@@ -69,15 +69,11 @@ class Result {
 		return _.sortBy(joined, answer => answer.question.name)
 	}
 
-	_makeRow() {
-		return {'受試者': this.subjectName}
-	}
-
 	exportRows() {
-		const imageChoiceRow = this._makeRow()
-		const rightChoiceRow = this._makeRow()
-		const choiceTimeRow = this._makeRow()
-		const playCountRow = this._makeRow()
+		const imageChoiceRow = {}
+		const rightChoiceRow = {}
+		const choiceTimeRow = {}
+		const playCountRow = {}
 
 		for (const answer of this.sortedAnswers) {
 			const key = answer.question.name

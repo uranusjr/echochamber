@@ -29,15 +29,17 @@ class Workbook {
 
 
 
-export function exportExcel(browserWindow, filename, resultRowSets) {
+export function exportExcel(browserWindow, filename, resultSets) {
 	const selection = dialog.showOpenDialog(browserWindow, {
 		properties: ['openDirectory'],
 	})
 	if (!selection || selection.length < 1) {
 		return
 	}
+	// TODO: We need to collect aggregated column names to use for all data.
 	const workbook = new Workbook()
-	for (const rows of resultRowSets) {
+	for (const {subjectName, rows} of resultSets) {
+		workbook.add('受試者資料', [{'代號': subjectName}])
 		for (const [key, value] of Object.entries(rows)) {
 			workbook.add(key, [value])
 		}

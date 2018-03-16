@@ -70,7 +70,9 @@ export default {
 			})
 			ipcRenderer.send('export-excel', {
 				filename: `${timestamp}.xlsx`,
-				resultRowSets: _.map(this.results, r => r.exportRows()),
+				resultSets: _.map(this.results, r => {
+					return {subjectName: r.subjectName, rows: r.exportRows()}
+				}),
 			})
 		},
 	},

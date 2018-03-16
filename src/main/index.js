@@ -43,8 +43,8 @@ ipcMain.on('save-result', (event, {meta, data}) => {
 	})
 })
 
-ipcMain.on('export-excel', (event, {filename, resultRowSets}) => {
-	exportExcel(getWindow(), filename, resultRowSets)
+ipcMain.on('export-excel', (event, {filename, resultSets}) => {
+	exportExcel(getWindow(), filename, resultSets)
 	event.sender.send('export-excel-success')
 })
 
