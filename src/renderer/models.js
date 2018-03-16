@@ -68,6 +68,32 @@ class Result {
 		const joined = Array.prototype.concat.apply([], this.groups)
 		return _.sortBy(joined, answer => answer.question.name)
 	}
+
+	_makeRow() {
+		return {'受試者': this.subjectName}
+	}
+
+	exportRows() {
+		const imageChoiceRow = this._makeRow()
+		const rightChoiceRow = this._makeRow()
+		const choiceTimeRow = this._makeRow()
+		const playCountRow = this._makeRow()
+
+		for (const answer of this.sortedAnswers) {
+			const key = answer.question.name
+			imageChoiceRow[key] = answer.image.choice
+			rightChoiceRow[key] = answer.isImageCorrect
+			choiceTimeRow[key] = answer.image.msDiffs[0] / 1000.0
+			playCountRow[key] = answer.image.msDiffs.length
+		}
+
+		return {
+			'圖片選擇': imageChoiceRow,
+			'圖片正確': rightChoiceRow,
+			'選擇用秒': choiceTimeRow,
+			'播放次數': playCountRow,
+		}
+	}
 }
 
 export class SessionResult extends Result {

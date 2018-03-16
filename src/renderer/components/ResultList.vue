@@ -33,6 +33,17 @@
 		</tbody>
 	</table>
 
+	<form v-if="reversedResults.length > 0">
+		<div class="field is-grouped">
+			<div class="control">
+				<button type="button" class="button is-primary"
+						v-on:click="exportExcel">
+					匯出 Excel 檔案
+				</button>
+			</div>
+		</div>
+	</form>
+
 </main>
 
 </template>
@@ -40,13 +51,29 @@
 
 <script>
 
+import {ipcRenderer} from 'electron'
+import _ from 'lodash'
+import * as moment from 'moment'
+
 export default {
 	props: ['results'],
 	computed: {
 		reversedResults() {
 			return this.results.slice().reverse()
 		},
-	}
+	},
+	methods: {
+		exportExcel() {
+			const timestamp = moment().format('YYYYMMDD-HHmmss-SSS')
+			ipcRenderer.on('export-excel-success', () => {
+				// TODO...
+			})
+			ipcRenderer.send('export-excel', {
+				filename: `${timestamp}.xlsx`,
+				resultRowSets: _.map(this.results, r => r.exportRows()),
+			})
+		},
+	},
 }
 
 </script>

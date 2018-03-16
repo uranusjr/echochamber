@@ -2,6 +2,7 @@ import path from 'path'
 import {app, ipcMain} from 'electron'
 
 import {selectProjectDirectory, saveProjectMeta, saveResult} from './projects'
+import {exportExcel} from './exports'
 import {createWindow, getWindow} from './windows'
 
 /**
@@ -40,6 +41,11 @@ ipcMain.on('save-result', (event, {meta, data}) => {
 	saveResult(meta, data).then(data => {
 		event.sender.send('save-result-success', data)
 	})
+})
+
+ipcMain.on('export-excel', (event, {filename, resultRowSets}) => {
+	exportExcel(getWindow(), filename, resultRowSets)
+	event.sender.send('export-excel-success')
 })
 
 
