@@ -65,7 +65,8 @@ class Result {
 	}
 
 	get sortedAnswers() {
-		return _.sortBy(_.sum(this.groups), answer => answer.question.name)
+		const joined = Array.prototype.concat.apply([], this.groups)
+		return _.sortBy(joined, answer => answer.question.name)
 	}
 }
 
