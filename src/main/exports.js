@@ -10,14 +10,20 @@ class Workbook {
 		this.Sheets = {}
 	}
 
-	add(sheetName, json) {
+	add(sheetName, json, header) {
+		if (!json || !json.length) {
+			return
+		}
 		if (this.SheetNames.includes(sheetName)) {
 			xlsx.utils.sheet_add_json(this.Sheets[sheetName], json, {
-				skipHeader:true, origin: -1,
+				skipHeader: true, origin: -1,
 			})
 		} else {
+			if (!header) {
+				header = Object.keys(json[0])
+			}
 			this.SheetNames.push(sheetName)
-			this.Sheets[sheetName] = xlsx.utils.json_to_sheet(json)
+			this.Sheets[sheetName] = xlsx.utils.json_to_sheet(json, {header: header})
 		}
 	}
 
@@ -36,12 +42,26 @@ export function exportExcel(browserWindow, filename, resultSets) {
 	if (!selection || selection.length < 1) {
 		return
 	}
-	// TODO: We need to collect aggregated column names to use for all data.
+
+	// Get all possible keys as column headers.
+	const keySet = new Set()
+	const keys = []
+	for (const resultSet of resultSets) {
+		for (const row of Object.values(resultSet.rows)) {
+			for (const key of Object.keys(row)) {
+				if (!keySet.has(key)) {
+					keySet.add(key)
+					keys.push(key)
+				}
+			}
+		}
+	}
+
 	const workbook = new Workbook()
 	for (const {subjectName, rows} of resultSets) {
 		workbook.add('受試者資料', [{'代號': subjectName}])
 		for (const [key, value] of Object.entries(rows)) {
-			workbook.add(key, [value])
+			workbook.add(key, [value], keys)
 		}
 	}
 	workbook.save(path.join(selection[0], filename))
