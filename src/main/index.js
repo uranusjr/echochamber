@@ -3,6 +3,7 @@ import {app, ipcMain} from 'electron'
 
 import {selectProjectDirectory, saveProjectMeta, saveResult} from './projects'
 import {exportExcel} from './exports'
+import {saveTempSync} from './utils'
 import {createWindow, getWindow} from './windows'
 
 /**
@@ -35,6 +36,11 @@ ipcMain.on('save-project-meta', (event, {source, data}) => {
 	saveProjectMeta(source, data).then(() => {
 		event.sender.send('save-project-meta-success')
 	})
+})
+
+ipcMain.on('save-temp-sync', (event, data) => {
+	const tempPath = saveTempSync(data.buffer, data.container)
+	event.returnValue = tempPath
 })
 
 ipcMain.on('save-result', (event, {meta, data}) => {

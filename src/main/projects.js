@@ -60,7 +60,7 @@ function createProject(rootDir) {
 	}
 
 	for (const entryName of fs.readdirSync(rootDir)) {
-		if (entryName === RESULTS_DIRNAME || entryName === PROJECT_META_NAME) {
+		if (entryName.startsWith('.') || entryName === PROJECT_META_NAME) {
 			continue
 		}
 
@@ -181,8 +181,9 @@ export function saveResult(meta, data) {
 		// Create job to save readback audio.
 		const audioTarget = path.join(stepDir, 'audio.wav')
 		if (!fs.existsSync(audioTarget)) {
-			promises.push(promisify(fs.writeFile)(audioTarget, answer.audio.buffer))
+			promises.push(promisify(copyFile)(answer.audio.tempPath, audioTarget))
 		}
+		promises.push(promisify(fs.unlink)(answer.audio.tempPath))
 	}) })
 
 	// Create job to write result metadata.

@@ -1,4 +1,6 @@
+import crypto from 'crypto'
 import fs from 'fs'
+import path from 'path'
 
 
 export function promisify(towrap, opts) {
@@ -42,4 +44,17 @@ export function copyFile(source, target, callback) {
 	targetStream.on('close', completionHandler)
 
 	sourceStream.pipe(targetStream)
+}
+
+
+export function saveTempSync(data, rootDir) {
+	const tempDir = path.join(rootDir, '.temp')
+	if (!fs.existsSync(tempDir)) {
+		fs.mkdirSync(tempDir)
+	}
+	const filename = crypto.createHash('md5').update(data).digest('hex')
+	const target = path.join(tempDir, filename)
+	fs.writeFileSync(target, data)
+
+	return target
 }

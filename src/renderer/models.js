@@ -19,7 +19,7 @@ export class Answer {
 	constructor(opts) {
 		this.question = opts.question
 		this.image = opts.image 	// {choice: String, msDiffs: Array(Number)}.
-		this.audio = opts.audio 	// {blob: Blob, buffer: Buffer} / {name: String}.
+		this.audio = opts.audio 	// {tempPath: String} / {name: String}.
 	}
 
 	/** Determine if the image selection is correct.

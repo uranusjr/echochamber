@@ -1,3 +1,4 @@
+import {ipcRenderer} from 'electron'
 import _ from 'lodash'
 
 import {Answer} from '@/models'
@@ -47,7 +48,7 @@ const mutations = {
 	},
 	SESSION_SET_AUDIO_ANSWER(state, data) {
 		const answer = getStep(state, data.groupIndex, data.questionIndex)
-		answer.audio = {blob: data.blob, buffer: data.buffer}
+		answer.audio = {tempPath: data.tempPath}
 	},
 }
 
@@ -65,14 +66,22 @@ const actions = {
 	SESSION_SET_IMAGE_ANSWER({commit}, data) {
 		commit('SESSION_SET_IMAGE_ANSWER', data)
 	},
-	SESSION_SET_AUDIO_ANSWER({commit}, data) {
+	SESSION_SET_AUDIO_ANSWER({commit, rootState}, data) {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader()
 			reader.onload = function () {
 				if (reader.readyState === FileReader.DONE) {
 					data.buffer = Buffer.from(reader.result)
-					commit('SESSION_SET_AUDIO_ANSWER', data)
-					resolve()
+					const tempPath = ipcRenderer.sendSync('save-temp-sync', {
+						buffer: data.buffer,
+						container: rootState.project.source,
+					})
+					commit('SESSION_SET_AUDIO_ANSWER', {
+						groupIndex: data.groupIndex,
+						questionIndex:data.questionIndex,
+						tempPath: tempPath,
+					})
+					resolve(data)
 				}
 			}
 			reader.onerror = function (error) {
