@@ -52,7 +52,7 @@
 			感謝作答。請按「儲存」結束答題程序。
 		</p>
 
-		<div class="field is-grouped">
+		<div v-if="!administration" class="field is-grouped">
 			<div class="control">
 				<button type="submit" v-bind:class="submitClass">儲存</button>
 			</div>
