@@ -1,7 +1,10 @@
+import fs from 'fs'
 import path from 'path'
 
 import {dialog} from 'electron'
 import xlsx from 'xlsx'
+
+import {copyFile, promisify} from './utils'
 
 
 class Workbook {
@@ -35,12 +38,12 @@ class Workbook {
 
 
 
-export function exportExcel(browserWindow, filename, resultSets) {
+export function exportExcel(browserWindow, rootDir, basename, resultSets) {
 	const selection = dialog.showOpenDialog(browserWindow, {
 		properties: ['openDirectory'],
 	})
 	if (!selection || selection.length < 1) {
-		return
+		return Promise.reject(new Error('cancelled'))
 	}
 
 	// Get all possible keys as column headers.
@@ -57,12 +60,33 @@ export function exportExcel(browserWindow, filename, resultSets) {
 		}
 	}
 
+	// Make sure the attachment target directory exists.
+	const attachmentDir = path.join(selection[0], basename)
+	if (!fs.existsSync(attachmentDir)) {
+		fs.mkdirSync(attachmentDir)
+	}
+
+	// Generate XLSX and copy audio files.
+	const promises = []
 	const workbook = new Workbook()
-	for (const {subjectName, rows} of resultSets) {
-		workbook.add('受試者資料', [{'代號': subjectName}])
-		for (const [key, value] of Object.entries(rows)) {
+	for (const [i, r] of resultSets.entries()) {
+		workbook.add('受試者資料', [{'代號': r.subjectName}])
+		for (const [key, value] of Object.entries(r.rows)) {
 			workbook.add(key, [value], keys)
 		}
+		const prefix = i.toString().padStart(4, '0')
+		const attdir = path.join(attachmentDir, `${prefix}-${r.subjectName}`)
+		if (!fs.existsSync(attdir)) {
+			fs.mkdirSync(attdir)
+		}
+		for (const {name, parts} of r.audioPathParts) {
+			const source = path.join(rootDir, ...parts)
+			const suffix = path.extname(source)
+			const target = path.join(attdir, `${name}${suffix}`)
+			promises.push(promisify(copyFile)(source, target))
+		}
 	}
-	workbook.save(path.join(selection[0], filename))
+	workbook.save(path.join(selection[0], `${basename}.xlsx`))
+
+	return Promise.all(promises)
 }

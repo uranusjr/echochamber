@@ -100,18 +100,26 @@ export default {
 				return
 			}
 			const timestamp = moment().format('YYYYMMDD-HHmmss-SSS')
+			ipcRenderer.on('export-excel-failure', () => {
+				this.loading = false
+			})
 			ipcRenderer.on('export-excel-success', () => {
 				this.loading = false
 				this.message = {
 					title: '匯出完成',
-					body: `檔名：${timestamp}.xlsx`,
+					body: `檔名：${timestamp}`,
 				}
 			})
 			this.loading = true
 			ipcRenderer.send('export-excel', {
-				filename: `${timestamp}.xlsx`,
+				source: this.$store.state.project.source,
+				basename: timestamp,
 				resultSets: _.map(this.results, r => {
-					return {subjectName: r.subjectName, rows: r.exportRows()}
+					return {
+						subjectName: r.subjectName,
+						rows: r.exportRows(),
+						audioPathParts: r.getAudioPathParts(),
+					}
 				}),
 			})
 		},

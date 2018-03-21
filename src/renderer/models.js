@@ -68,6 +68,38 @@ class Result {
 		const joined = Array.prototype.concat.apply([], this.groups)
 		return _.sortBy(joined, answer => answer.question.name)
 	}
+}
+
+export class SessionResult extends Result {
+}
+
+export class PersistedResult extends Result {
+	constructor(opts) {
+		super(opts)
+		this.root = opts.root
+	}
+
+	_getAudioPathParts(answer) {
+		return ['.results', this.name, answer.question.name, answer.audio.name]
+	}
+
+	getImageChoice(answer) {
+		return [
+			this.root, '.results',
+			this.name, answer.question.name, answer.image.choice,
+		].join('/')
+	}
+
+	getAudio(answer) {
+		const parts = [this.root] + this._getAudioPathParts(answer)
+		return parts.join('/')
+	}
+
+	getAudioPathParts() {
+		return _.map(this.sortedAnswers, a => {
+			return {name: a.question.name, parts: this._getAudioPathParts(a)}
+		})
+	}
 
 	exportRows() {
 		const imageChoiceRow = {}
@@ -89,36 +121,5 @@ class Result {
 			'選擇用秒': choiceTimeRow,
 			'播放次數': playCountRow,
 		}
-	}
-}
-
-export class SessionResult extends Result {
-	getImageChoice(answer) {
-		return answer.question.getAssetUrl(answer.image.choice)
-	}
-
-	getAudio(answer) {
-		return window.URL.createObjectURL(answer.audio.blob)
-	}
-}
-
-export class PersistedResult extends Result {
-	constructor(opts) {
-		super(opts)
-		this.root = opts.root
-	}
-
-	getImageChoice(answer) {
-		return [
-			this.root, '.results',
-			this.name, answer.question.name, answer.image.choice,
-		].join('/')
-	}
-
-	getAudio(answer) {
-		return [
-			this.root, '.results',
-			this.name, answer.question.name, answer.audio.name,
-		].join('/')
 	}
 }
