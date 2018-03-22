@@ -91,8 +91,8 @@ export class PersistedResult extends Result {
 	}
 
 	getAudio(answer) {
-		const parts = [this.root] + this._getAudioPathParts(answer)
-		return parts.join('/')
+		const parts = this._getAudioPathParts(answer)
+		return `${this.root}/${parts.join('/')}`
 	}
 
 	getAudioPathParts() {
