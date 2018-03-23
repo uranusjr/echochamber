@@ -15,7 +15,8 @@
 		<div class="tile is-vertical is-parent">
 			<div class="tile is-child control-tile">
 				<span class="fa fa-stack fa-5x"
-						v-if="!recording && !saving" v-on:click="startRecord()">
+						v-if="recorder && !recording && !saving"
+						v-on:click="startRecord()">
 					<span class="fa fa-circle-thin fa-stack-2x"></span>
 					<span v-bind:class="recorderIconClass"></span>
 				</span>
@@ -43,21 +44,21 @@ import Recorder from 'recorder-js'
 export default {
 	props: ['groupIndex', 'questionIndex', 'question', 'imageName', 'next'],
 	data() {
-		const audioContext = new window.AudioContext()
-		const recorder = new Recorder(audioContext, {
-			onAnalysed: ({data}) => { this.waveBars = data },
+		this.$store.dispatch('AUDIO_CONTEXT_ENSURE').then(() => {
+			const recorder = new Recorder(this.$store.state.audio.context, {
+				onAnalysed: ({data}) => { this.waveBars = data },
+			})
+			navigator.mediaDevices.getUserMedia({audio: true}).then(mstream => {
+				recorder.init(mstream)
+			}).catch(err => {
+				// TODO: Do something better...
+				window.alert(err.name + ': ' + err.message)
+			})
+			this.recorder = recorder
 		})
-		navigator.mediaDevices.getUserMedia({audio: true}).then(mstream => {
-			recorder.init(mstream)
-		}).catch(err => {
-			// TODO: Do something better...
-			window.alert(err.name + ': ' + err.message)
-		})
-
 		return {
 			saving: false,
-			audioContext: audioContext,
-			recorder: recorder,
+			recorder: null,
 			recording: false,
 			waveBars: [],
 		}
