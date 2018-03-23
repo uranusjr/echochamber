@@ -40,7 +40,7 @@
 				<div class="control">
 					<button type="button" class="button is-primary"
 							v-bind:disabled="loading" v-on:click="exportExcel">
-						匯出 Excel 檔案
+						匯出檔案
 					</button>
 				</div>
 			</div>
