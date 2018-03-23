@@ -37,7 +37,7 @@ function createProject(rootDir) {
 	const project = {
 		source: rootDir,
 		root: getProjectRoot(rootDir),
-		groupSize: 5,
+		groupSize: 3,
 		questions: [],
 		results: [],
 	}
