@@ -78,7 +78,7 @@ const actions = {
 					})
 					commit('SESSION_SET_AUDIO_ANSWER', {
 						groupIndex: data.groupIndex,
-						questionIndex:data.questionIndex,
+						questionIndex: data.questionIndex,
 						tempPath: tempPath,
 					})
 					resolve(data)
