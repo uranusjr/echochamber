@@ -3,7 +3,7 @@
 <div class="page-content">
 
 	<h1 class="title">
-		第 {{ groupIndex + 1 }}-{{ questionIndex + 1 }} 題：念出符合圖片的描述
+		第 {{ groupIndex + 1 }}-{{ questionIndex + 1 }} 題：{{ helpText }}
 	</h1>
 	<hr>
 	<div class="tile is-ancestor">
@@ -78,6 +78,12 @@ export default {
 				'is-loading': this.saving,
 				'is-primary': true,
 			}
+		},
+		helpText() {
+			if (this.recording) {
+				return '念出符合圖片的描述'
+			}
+			return '按下麥克風按鈕開始錄音'
 		}
 	},
 	methods: {
