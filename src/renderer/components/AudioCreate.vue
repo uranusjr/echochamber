@@ -26,7 +26,7 @@
 				</wave-display>
 			</div>
 			<div class="tile is-child control-tile" v-if="recording || saving">
-				<button type="button"
+				<button type="button" v-bind:disabled="loading"
 						v-bind:class="submitButtonClass" v-on:click="saveAudioBlob">
 					送出
 				</button>
@@ -59,11 +59,21 @@ export default {
 			this.recorder = recorder
 		})
 		return {
+			loading: false,
 			saving: false,
 			recorder: null,
 			recording: false,
 			waveBars: [],
 		}
+	},
+	watch: {
+		recording(val) {
+			if (val && !this.loading) {
+				// Some quiet time for the button to avoid instant submit.
+				this.loading = true
+				setTimeout(() => { this.loading = false }, 1000)
+			}
+		},
 	},
 	computed: {
 		recorderIconClass() {
