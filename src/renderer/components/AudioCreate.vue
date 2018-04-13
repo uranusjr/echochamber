@@ -13,21 +13,23 @@
 			</div>
 		</div>
 		<div class="tile is-vertical is-parent">
-			<div class="tile is-child control-tile">
+			<div class="tile is-child control-tile"
+					v-if="recorder && !recording && !saving">
 				<span class="fa fa-stack fa-5x"
-						v-if="recorder && !recording && !saving"
 						v-on:click="startRecord()">
 					<span class="fa fa-circle-thin fa-stack-2x"></span>
 					<span v-bind:class="recorderIconClass"></span>
 				</span>
-				<button type="button" v-if="recording && !saving"
-						v-bind:class="submitButtonClass" v-on:click="saveAudioBlob">
-					送出
-				</button>
 			</div>
 			<div class="tile is-child">
 				<wave-display v-if="recording" v-bind:values="waveBars">
 				</wave-display>
+			</div>
+			<div class="tile is-child control-tile" v-if="recording || saving">
+				<button type="button"
+						v-bind:class="submitButtonClass" v-on:click="saveAudioBlob">
+					送出
+				</button>
 			</div>
 		</div>
 	</div>
@@ -135,7 +137,6 @@ export default {
 	}
 }
 .control-tile {
-	height: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
