@@ -99,6 +99,7 @@ export default {
 				const audio = this.$el.querySelectorAll('.repeat-audio')[i]
 				if (audio && audio.duration) {
 					answer.audioDurationCache = audio.duration
+					this.$store.dispatch('PROJECT_SAVE_RESULT', this.result)
 				}
 				return '——'
 			}
