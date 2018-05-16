@@ -29,7 +29,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="answer in result.sortedAnswers">
+				<tr v-for="(answer, i) in result.sortedAnswers">
 					<th>{{ answer.question.name }}</th>
 					<td>
 						<image-box v-bind:src="result.getImageChoice(answer)"></image-box>
@@ -40,9 +40,10 @@
 					</td>
 					<td class="is-nowrap" v-html="getChoiceStatsDisplay(answer)"></td>
 					<td>
-						<audio controls="controls">
+						<audio controls="controls" class="repeat-audio">
 							<source v-bind:src="result.getAudio(answer)">
 						</audio>
+						<p v-html="getAudioDurationDisplay(answer, i)"></p>
 					</td>
 				</tr>
 			</tbody>
@@ -93,6 +94,16 @@ export default {
 				`<p>用時 <strong>${secs.toFixed(3)}</strong> 秒</p>`
 			)
 		},
+		getAudioDurationDisplay(answer, i) {
+			if (!answer.audioDurationCache) {
+				const audio = this.$el.querySelectorAll('.repeat-audio')[i]
+				if (audio && audio.duration) {
+					answer.audioDurationCache = audio.duration
+				}
+				return '——'
+			}
+			return `<strong>${answer.audioDurationCache}</strong> 秒`
+		}
 		saveResult() {
 			this.saving = true
 			this.$store.dispatch('PROJECT_SAVE_RESULT', this.result).then(() => {

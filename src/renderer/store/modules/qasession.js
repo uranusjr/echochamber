@@ -49,6 +49,7 @@ const mutations = {
 	SESSION_SET_AUDIO_ANSWER(state, data) {
 		const answer = getStep(state, data.groupIndex, data.questionIndex)
 		answer.audio = {tempPath: data.tempPath}
+		answer.audioDurationCache = data.duration
 	},
 }
 
@@ -79,6 +80,7 @@ const actions = {
 					commit('SESSION_SET_AUDIO_ANSWER', {
 						groupIndex: data.groupIndex,
 						questionIndex: data.questionIndex,
+						duration: data.duration,
 						tempPath: tempPath,
 					})
 					resolve(data)

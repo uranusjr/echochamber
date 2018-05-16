@@ -20,6 +20,7 @@ export class Answer {
 		this.question = opts.question
 		this.image = opts.image 	// {choice: String, msDiffs: Array(Number)}.
 		this.audio = opts.audio 	// {tempPath: String} / {name: String}.
+		this.audioDurationCache = null
 	}
 
 	/** Determine if the image selection is correct.
@@ -106,6 +107,7 @@ export class PersistedResult extends Result {
 		const rightChoiceRow = {}
 		const choiceTimeRow = {}
 		const playCountRow = {}
+		const repeatTimeRow = {}
 
 		for (const answer of this.sortedAnswers) {
 			const key = answer.question.name
@@ -113,6 +115,7 @@ export class PersistedResult extends Result {
 			rightChoiceRow[key] = answer.isImageCorrect
 			choiceTimeRow[key] = answer.image.msDiffs[0] / 1000.0
 			playCountRow[key] = answer.image.msDiffs.length
+			repeatTimeRow[key] = answer.audioDurationCache
 		}
 
 		return {
@@ -120,6 +123,7 @@ export class PersistedResult extends Result {
 			'圖片正確': rightChoiceRow,
 			'選擇用秒': choiceTimeRow,
 			'播放次數': playCountRow,
+			'復述用秒': repeatTimeRow,
 		}
 	}
 }

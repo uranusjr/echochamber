@@ -41,6 +41,7 @@
 
 <script>
 
+import * as moment from 'moment'
 import Recorder from 'recorder-js'
 
 export default {
@@ -64,6 +65,7 @@ export default {
 			recorder: null,
 			recording: false,
 			waveBars: [],
+			beginTime: moment(),
 		}
 	},
 	watch: {
@@ -102,6 +104,7 @@ export default {
 	methods: {
 		startRecord() {
 			if (!this.recording) {
+				this.beginTime = moment()
 				this.recorder.start().then(() => {
 					this.recording = true
 				})
@@ -115,6 +118,7 @@ export default {
 					groupIndex: this.groupIndex,
 					questionIndex: this.questionIndex,
 					blob: data.blob,
+					duration: moment().diff(this.beginTime),
 				})
 			}).then(() => {
 				this.saving = false
