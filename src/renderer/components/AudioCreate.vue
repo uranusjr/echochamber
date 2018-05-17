@@ -118,7 +118,7 @@ export default {
 					groupIndex: this.groupIndex,
 					questionIndex: this.questionIndex,
 					blob: data.blob,
-					duration: moment().diff(this.beginTime),
+					duration: moment().diff(this.beginTime) / 1000.0,
 				})
 			}).then(() => {
 				this.saving = false
