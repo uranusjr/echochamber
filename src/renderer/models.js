@@ -20,7 +20,7 @@ export class Answer {
 		this.question = opts.question
 		this.image = opts.image 	// {choice: String, msDiffs: Array(Number)}.
 		this.audio = opts.audio 	// {tempPath: String} / {name: String}.
-		this.audioDurationCache = null
+		this.audioDurationCache = opts.audioDurationCache || null
 	}
 
 	/** Determine if the image selection is correct.
