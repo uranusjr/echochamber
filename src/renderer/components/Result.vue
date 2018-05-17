@@ -29,7 +29,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="(answer, i) in result.sortedAnswers">
+				<tr v-for="answer in result.sortedAnswers">
 					<th>{{ answer.question.name }}</th>
 					<td>
 						<image-box v-bind:src="result.getImageChoice(answer)"></image-box>
@@ -43,7 +43,7 @@
 						<audio controls="controls" class="repeat-audio">
 							<source v-bind:src="result.getAudio(answer)">
 						</audio>
-						<p v-html="getAudioDurationDisplay(answer, i)"></p>
+						<p v-html="getAudioDurationDisplay(answer)"></p>
 					</td>
 				</tr>
 			</tbody>
@@ -53,7 +53,7 @@
 			感謝作答。請按「儲存」結束答題程序。
 		</p>
 
-		<div v-if="!administration" class="field is-grouped">
+		<div v-if="true || !administration" class="field is-grouped">
 			<div class="control">
 				<button type="submit" v-bind:class="submitClass">儲存</button>
 			</div>
@@ -94,19 +94,23 @@ export default {
 				`<p>用時 <strong>${secs.toFixed(3)}</strong> 秒</p>`
 			)
 		},
-		getAudioDurationDisplay(answer, i) {
+		getAudioDurationDisplay(answer) {
 			if (!answer.audioDurationCache) {
-				const audio = this.$el.querySelectorAll('.repeat-audio')[i]
-				if (audio && audio.duration) {
-					answer.audioDurationCache = audio.duration
-					this.$store.dispatch('PROJECT_SAVE_RESULT', this.result)
-				}
 				return '——'
 			}
 			return `<strong>${answer.audioDurationCache}</strong> 秒`
 		},
+		fixAudioDurationCache() {
+			const audios = this.$el.querySelectorAll('.repeat-audio')
+			for (const [i, answer] of this.result.sortedAnswers.entries()) {
+				if (!answer.audioDurationCache && !Number.isNaN(audios[i].duration)) {
+					answer.audioDurationCache = audios[i].duration
+				}
+			}
+		},
 		saveResult() {
 			this.saving = true
+			this.fixAudioDurationCache()
 			this.$store.dispatch('PROJECT_SAVE_RESULT', this.result).then(() => {
 				this.saving = false
 				this.$router.push({name: 'index'})
