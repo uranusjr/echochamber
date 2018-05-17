@@ -46,6 +46,9 @@ ipcMain.on('save-temp-sync', (event, data) => {
 ipcMain.on('save-result', (event, {meta, data}) => {
 	saveResult(meta, data).then(data => {
 		event.sender.send('save-result-success', data)
+	}).catch(e => {
+		console.log(e)
+		event.sender.send('save-result-fail', e.toString())
 	})
 })
 

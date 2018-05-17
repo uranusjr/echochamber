@@ -81,6 +81,9 @@ const actions = {
 				commit('PROJECT_SAVE_RESULT', persistedData)
 				resolve()
 			})
+			ipcRenderer.on('save-result-fail', (event, error) => {
+				reject(error)
+			})
 			const meta = {source: state.source, name: result.name}
 			ipcRenderer.send('save-result', {meta: meta, data: result})
 		})
