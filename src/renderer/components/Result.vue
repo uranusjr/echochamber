@@ -104,7 +104,7 @@ export default {
 				return '——'
 			}
 			return `<strong>${answer.audioDurationCache}</strong> 秒`
-		}
+		},
 		saveResult() {
 			this.saving = true
 			this.$store.dispatch('PROJECT_SAVE_RESULT', this.result).then(() => {
