@@ -182,8 +182,8 @@ export function saveResult(meta, data) {
 		const audioTarget = path.join(stepDir, 'audio.wav')
 		if (!fs.existsSync(audioTarget)) {
 			promises.push(promisify(copyFile)(answer.audio.tempPath, audioTarget))
+			promises.push(promisify(fs.unlink)(answer.audio.tempPath))
 		}
-		promises.push(promisify(fs.unlink)(answer.audio.tempPath))
 	}) })
 
 	// Create job to write result metadata.
